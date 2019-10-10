@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "outDir": "js",
+    "target": "ES2016",
+    "moduleResolution": "node",
+    "lib": ["dom", "esnext"],
+    "jsx": "react-native"
+  },
+  "include": [
+    "src/**/*"
+  ]
+}
