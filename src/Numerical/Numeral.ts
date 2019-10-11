@@ -65,6 +65,10 @@ export default class Numeral implements NumberLike<Numeral> {
     return this.mul(that.recip());
   }
 
+  static zero(): Numeral {
+    return numeral(Ratio.zero());
+  }
+
 }
 
 export enum Level {
