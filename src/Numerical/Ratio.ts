@@ -1,7 +1,8 @@
 
 import { gcd } from './Util'
+import NumberLike from './NumberLike'
 
-export default class Ratio {
+export default class Ratio implements NumberLike<Ratio> {
 
   readonly num: bigint;
   readonly den: bigint;

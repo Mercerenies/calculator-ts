@@ -1,5 +1,7 @@
 
-export default class Complex {
+import NumberLike from './NumberLike'
+
+export default class Complex implements NumberLike<Complex> {
 
   readonly real: number;
   readonly imag: number;
