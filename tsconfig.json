@@ -3,6 +3,7 @@
     "strict": true,
     "outDir": "js",
     "target": "ES2016",
+    "module": "commonjs",
     "moduleResolution": "node",
     "lib": ["dom", "esnext"],
     "jsx": "react-native"

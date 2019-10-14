@@ -65,6 +65,10 @@ export default class Numeral implements NumberLike<Numeral> {
     return this.mul(that.recip());
   }
 
+  toString(): string {
+    return unaryDispatchU(this, (a) => a.toString());
+  }
+
   static zero(): Numeral {
     return numeral(Ratio.zero());
   }

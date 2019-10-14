@@ -2,7 +2,7 @@
 import Numeral from './Numerical/Numeral'
 import { noop } from './Util'
 
-export abstract class Expr {
+export default class Expr {
 
   private nature: "number" | "variable" | "compound";
   private value: Numeral
