@@ -14,11 +14,54 @@ export enum Assoc {
   None, Left, Right
 }
 
-export function operator(name: string, fixity: Fixity, assoc: Assoc, prec: number): Operator {
-  return {
-    name: name,
-    fixity: fixity,
-    assoc: assoc,
-    prec: prec,
-  };
-}
+export const StdOperatorTable: Map<string, Operator> =
+  new Map<string, Operator>([
+    ["+", {
+      name: " + ",
+      fixity: Fixity.Infix,
+      assoc: Assoc.Left,
+      prec: 50,
+    }],
+    ["-", {
+      name: " - ",
+      fixity: Fixity.Infix,
+      assoc: Assoc.Left,
+      prec: 50,
+    }],
+    ["*", {
+      name: " * ",
+      fixity: Fixity.Infix,
+      assoc: Assoc.Left,
+      prec: 60,
+    }],
+    ["/", {
+      name: " / ",
+      fixity: Fixity.Infix,
+      assoc: Assoc.Left,
+      prec: 60,
+    }],
+    ["^", {
+      name: "^",
+      fixity: Fixity.Infix,
+      assoc: Assoc.Right,
+      prec: 70,
+    }],
+    ["_", {
+      name: "-",
+      fixity: Fixity.Prefix,
+      assoc: Assoc.None,
+      prec: 50,
+    }],
+    ["fact", {
+      name: "!",
+      fixity: Fixity.Postfix,
+      assoc: Assoc.None,
+      prec: 100,
+    }],
+    ["dfact", {
+      name: "!!",
+      fixity: Fixity.Postfix,
+      assoc: Assoc.None,
+      prec: 100,
+    }],
+  ]);
