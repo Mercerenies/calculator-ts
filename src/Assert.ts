@@ -5,3 +5,10 @@ export function assert(value: boolean, message: string = "Assertion failed"): vo
   if (!value)
     throw new AssertionError(message);
 }
+
+export function assertDefined<T>(value: T | undefined,
+                                 message: string = "Value is undefined"): T {
+  if (value === undefined)
+    throw new AssertionError(message);
+  return value;
+}

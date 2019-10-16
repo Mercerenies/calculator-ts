@@ -2,7 +2,7 @@
 export interface Operator {
   readonly name: string;
   readonly fixity: Fixity;
-  readonly assoc: Assoc; // Only relevant if fixity == Fixity.Infix
+  readonly assoc: Assoc; // If fixity is not Infix, ensure associativity is left
   readonly prec: number;
 }
 
@@ -11,7 +11,7 @@ export enum Fixity {
 }
 
 export enum Assoc {
-  None, Left, Right
+  Left, Right
 }
 
 export const StdOperatorTable: Map<string, Operator> =
@@ -49,19 +49,19 @@ export const StdOperatorTable: Map<string, Operator> =
     ["_", {
       name: "-",
       fixity: Fixity.Prefix,
-      assoc: Assoc.None,
+      assoc: Assoc.Left,
       prec: 50,
     }],
     ["fact", {
       name: "!",
       fixity: Fixity.Postfix,
-      assoc: Assoc.None,
+      assoc: Assoc.Left,
       prec: 100,
     }],
     ["dfact", {
       name: "!!",
       fixity: Fixity.Postfix,
-      assoc: Assoc.None,
+      assoc: Assoc.Left,
       prec: 100,
     }],
   ]);
