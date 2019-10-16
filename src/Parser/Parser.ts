@@ -1,11 +1,11 @@
 
-import Floating from './Numerical/Floating'
-import Ratio from './Numerical/Ratio'
-import Complex from './Numerical/Complex'
-import Numeral from './Numerical/Numeral'
-import { assert } from './Assert'
+import Floating from '../Numerical/Floating'
+import Ratio from '../Numerical/Ratio'
+import Complex from '../Numerical/Complex'
+import Numeral from '../Numerical/Numeral'
+import { assert } from '../Assert'
 
-class Parser {
+export class Parser {
 
   private str: string;
   private pos: number;
@@ -51,7 +51,7 @@ class Parser {
     return result[0];
   }
 
-  advanceRegexp(re: RegExp): string | null {
+  parseRegexp(re: RegExp): string | null {
     const str = this.matchRegexp(re);
     if (str !== null)
       this.pos += str.length;
@@ -59,11 +59,11 @@ class Parser {
   }
 
   skipWhitespace(): void {
-    this.advanceRegexp(/\s*/);
+    this.parseRegexp(/\s*/);
   }
 
   parseFloat(): Floating | null {
-    const v = this.advanceRegexp(/[-+]?\d+\.\d+([eE]\d+)?/);
+    const v = this.parseRegexp(/[-+]?\d+\.\d+([eE]\d+)?/);
     if (v === null)
       return null;
     const f = parseFloat(v);
@@ -72,7 +72,7 @@ class Parser {
   }
 
   parseInt(): bigint | null {
-    const v = this.advanceRegexp(/[-+]\d+/);
+    const v = this.parseRegexp(/[-+]\d+/);
     if (v === null)
       return null;
     return BigInt(v);
@@ -81,7 +81,7 @@ class Parser {
   parseRatio(): Ratio | null {
     return this.saveExcursion(() => {
       const num = this.parseInt();
-      const colon = this.advanceRegexp(/:/);
+      const colon = this.parseRegexp(/:/);
       const den = this.parseInt();
       if ([num, colon, den].includes(null))
         return null;
@@ -91,11 +91,11 @@ class Parser {
 
   parseComplex(): Complex | null {
     return this.saveExcursion(() => {
-      const p1 = this.advanceRegexp(/\(\s*/);
+      const p1 = this.parseRegexp(/\(\s*/);
       const re = this.parseFloat();
-      const comma = this.advanceRegexp(/\s*,\s*/);
+      const comma = this.parseRegexp(/\s*,\s*/);
       const im = this.parseFloat();
-      const p2 = this.advanceRegexp(/\(\s*/);
+      const p2 = this.parseRegexp(/\(\s*/);
       if ([p1, re, comma, im, p2].includes(null))
         return null;
       return new Complex(re!.value, im!.value);
@@ -112,7 +112,7 @@ class Parser {
   parseVariable(): string | null {
     // TODO We'll allow some Unicode stuff here later. Right now,
     // we're keeping this conservative.
-    return this.advanceRegexp(/[A-Za-z_][A-Za-z0-9_]*/);
+    return this.parseRegexp(/[A-Za-z_][A-Za-z0-9_]*/);
   }
 
 }
