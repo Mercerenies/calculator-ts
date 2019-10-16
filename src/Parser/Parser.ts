@@ -66,6 +66,14 @@ export default class Parser {
     return str;
   }
 
+  parseLiteral(str: string): string | null {
+    if (this.str.startsWith(str, this.pos)) {
+      this.advance(str.length);
+      return str;
+    }
+    return null;
+  }
+
   skipWhitespace(): void {
     this.parseRegexp(/\s*/);
   }
@@ -74,6 +82,10 @@ export default class Parser {
 
 export function parseRegexp(p: Parser, re: RegExp): string | null {
   return p.parseRegexp(re);
+}
+
+export function parseLiteral(p: Parser, str: string): string | null {
+  return p.parseLiteral(str);
 }
 
 export function skipWhitespace(p: Parser): void {
