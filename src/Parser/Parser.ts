@@ -1,18 +1,22 @@
 
-import Floating from '../Numerical/Floating'
-import Ratio from '../Numerical/Ratio'
-import Complex from '../Numerical/Complex'
-import Numeral from '../Numerical/Numeral'
-import { assert } from '../Assert'
+import { clamp } from '../Util'
 
-export class Parser {
+export default class Parser {
 
   private str: string;
-  private pos: number;
+  private _pos: number;
 
   constructor(str: string) {
     this.str = str;
-    this.pos = 0;
+    this._pos = 0;
+  }
+
+  private setPos(pos: number): void {
+    this._pos = clamp(this.pos, 0, this.str.length);
+  }
+
+  get pos(): number {
+    return this._pos;
   }
 
   atAbs(n: number): string {
@@ -26,6 +30,10 @@ export class Parser {
     return this.atAbs(this.pos + n);
   }
 
+  advance(n: number): void {
+    this.setPos(this.pos + n);
+  }
+
   inBounds(): boolean {
     return this.pos >= 0 && this.pos < this.str.length;
   }
@@ -34,7 +42,7 @@ export class Parser {
     let pos = this.pos;
     const result = f();
     if (result === null) {
-      this.pos = pos;
+      this.setPos(pos);
       return null;
     }
     return result;
@@ -54,7 +62,7 @@ export class Parser {
   parseRegexp(re: RegExp): string | null {
     const str = this.matchRegexp(re);
     if (str !== null)
-      this.pos += str.length;
+      this.advance(str.length);
     return str;
   }
 
@@ -62,57 +70,12 @@ export class Parser {
     this.parseRegexp(/\s*/);
   }
 
-  parseFloat(): Floating | null {
-    const v = this.parseRegexp(/[-+]?\d+\.\d+([eE]\d+)?/);
-    if (v === null)
-      return null;
-    const f = parseFloat(v);
-    assert(!isNaN(f));
-    return new Floating(f);
-  }
+}
 
-  parseInt(): bigint | null {
-    const v = this.parseRegexp(/[-+]\d+/);
-    if (v === null)
-      return null;
-    return BigInt(v);
-  }
+export function parseRegexp(p: Parser, re: RegExp): string | null {
+  return p.parseRegexp(re);
+}
 
-  parseRatio(): Ratio | null {
-    return this.saveExcursion(() => {
-      const num = this.parseInt();
-      const colon = this.parseRegexp(/:/);
-      const den = this.parseInt();
-      if ([num, colon, den].includes(null))
-        return null;
-      return new Ratio(num!, den!);
-    });
-  }
-
-  parseComplex(): Complex | null {
-    return this.saveExcursion(() => {
-      const p1 = this.parseRegexp(/\(\s*/);
-      const re = this.parseFloat();
-      const comma = this.parseRegexp(/\s*,\s*/);
-      const im = this.parseFloat();
-      const p2 = this.parseRegexp(/\(\s*/);
-      if ([p1, re, comma, im, p2].includes(null))
-        return null;
-      return new Complex(re!.value, im!.value);
-    });
-  }
-
-  parseNumber(): Numeral | null {
-    const value = this.parseRatio() || this.parseFloat() || this.parseComplex();
-    if (value === null)
-      return null;
-    return new Numeral(value);
-  }
-
-  parseVariable(): string | null {
-    // TODO We'll allow some Unicode stuff here later. Right now,
-    // we're keeping this conservative.
-    return this.parseRegexp(/[A-Za-z_][A-Za-z0-9_]*/);
-  }
-
+export function skipWhitespace(p: Parser): void {
+  return p.skipWhitespace();
 }
