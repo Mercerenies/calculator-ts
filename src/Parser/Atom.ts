@@ -62,3 +62,5 @@ export function parseVariable(p: Parser): string | null {
 export function parseAtom(p: Parser): Numeral | string | null {
   return parseNumber(p) || parseVariable(p);
 }
+
+///// Need to do shunting yard algorithm for compound parser.
