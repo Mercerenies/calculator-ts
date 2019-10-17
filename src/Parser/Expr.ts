@@ -1,6 +1,6 @@
 
-import Parser, { parseLiteral, skipWhitespace } from './Parser'
-import { parseAtom } from './Atom'
+import Parser, { parseLiteral, parseRegexp, skipWhitespace } from './Parser'
+import { parseAtom, parseVariable } from './Atom'
 import { CompoundParse } from './Compound'
 import { StdOperatorTable } from '../Operator'
 import Expr from '../Expr'
@@ -43,8 +43,37 @@ function parseAtom1(p: Parser): Expr | null {
   return new Expr(atom);
 }
 
+function parseFunction(p: Parser): Expr | null {
+  return p.saveExcursion(() => {
+    const fn = parseVariable(p);
+    if (fn === null)
+      return null;
+    const p1 = parseRegexp(p, /\s*\(\s*/);
+    if (p1 === null)
+      return null;
+    const args: Expr[] = [];
+    let first = true;
+    while (true) {
+      if (!first) {
+        const c = parseRegexp(p, /\s*,\s*/);
+        if (c === null)
+          break;
+      }
+      const arg = ExprParse.parseExpr(p);
+      if (arg === null)
+        break;
+      args.push(arg);
+      first = false;
+    }
+    const p2 = parseRegexp(p, /\s*\)/);
+    if (p2 === null)
+      return null;
+    return new Expr(fn, args);
+  });
+}
+
 export function parseExpr(p: Parser): Expr | null {
-  return parseParens(p) || parseAtom1(p);
+  return parseParens(p) || parseFunction(p) || parseAtom1(p);
 }
 
 export function parseFullExpr(p: Parser): Expr | null {
