@@ -6,7 +6,7 @@ import PrettyPrinter from './Printer/PrettyPrinter'
 import Numeral from './Numerical/Numeral'
 import Ratio from './Numerical/Ratio'
 import Parser from './Parser/Parser'
-import { parseFullExpr } from './Parser/Expr'
+import { parseExprFromLine } from './Parser/Expr'
 
 import * as readline from 'readline'
 
@@ -19,11 +19,9 @@ const llp = new LispLikePrinter();
 const pp = new PrettyPrinter();
 
 rl.on('line', (line) => {
-  const parser = new Parser(line);
-  const expr = parseFullExpr(parser);
+  const expr = parseExprFromLine(line);
   if (expr === null) {
     console.log("ERROR: Could not parse");
-    console.log("Stopped at " + parser.pos);
   } else {
     print(llp, expr);
     print(pp, expr);

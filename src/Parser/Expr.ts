@@ -50,3 +50,12 @@ export function parseExpr(p: Parser): Expr | null {
 export function parseFullExpr(p: Parser): Expr | null {
   return ExprParse.parseExpr(p);
 }
+
+export function parseExprFromLine(s: string): Expr | null {
+  const p = new Parser(s);
+  const result = parseFullExpr(p);
+  p.skipWhitespace();
+  if (p.inBounds())
+    return null; // Didn't read the whole line
+  return result;
+}
