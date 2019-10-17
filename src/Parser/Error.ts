@@ -21,14 +21,15 @@ export class ParseError {
     return base;
   }
 
-  static join<T>(err: Iterator<T | ParseError>): T | ParseError {
-    const first = err.next();
+  static join<T>(err: Iterable<T | ParseError>): T | ParseError {
+    const iter = err[Symbol.iterator]();
+    const first = iter.next();
     if (first.done)
       return new ParseError(0, "", []);
     let acc = first.value;
     if (!(acc instanceof ParseError))
       return acc;
-    for (const b of { [Symbol.iterator]() { return err; } }) {
+    for (const b of { [Symbol.iterator]() { return iter; } }) {
       if (!(b instanceof ParseError))
         return b;
       acc = new ParseError(Math.min(acc.pos, b.pos),
