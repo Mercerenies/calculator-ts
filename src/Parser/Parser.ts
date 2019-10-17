@@ -1,5 +1,6 @@
 
 import { clamp } from '../Util'
+import { ParseError, fail, expecting } from './Error'
 
 export default class Parser {
 
@@ -46,6 +47,14 @@ export default class Parser {
       return null;
     }
     return result;
+  }
+
+  fail(message: string): ParseError {
+    return fail(this.pos, message);
+  }
+
+  expecting(values: string[]): ParseError {
+    return expecting(this.pos, values);
   }
 
   matchRegexp(re: RegExp): string | null {

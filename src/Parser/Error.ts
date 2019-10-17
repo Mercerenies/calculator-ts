@@ -14,6 +14,6 @@ export function fail(pos: number, message: string): ParseError {
   return new ParseError(pos, message);
 }
 
-//export function expecting(pos: number, values: string[]): ParseError {
-  //return fail("Expecting "
-//}
+export function expecting(pos: number, values: string[]): ParseError {
+  return fail(pos, "Expecting " + values.join(", "));
+}
