@@ -42,8 +42,8 @@ export class CompoundParse<T> {
     return p.saveExcursion(() => {
       const output: T[] = [];
       const op: [string, Operator][] = [];
-      let state: "prefix" | "postfix" | "infix" | "token" = "prefix";
-      let applyOp = () => {
+      let state: "prefix" | "postfix" | "infix" | "token" = "infix";
+      const applyOp = () => {
         const curr = assertDefined(op.pop());
         switch (curr[1].fixity) {
           case Fixity.Infix:
@@ -61,6 +61,13 @@ export class CompoundParse<T> {
             break;
         }
       };
+      const resolveOp = (curr: [string, Operator]) => {
+        while ((op.length > 0) && ((op[op.length - 1][1].prec > curr[1].prec) ||
+                                   (op[op.length - 1][1].prec == curr[1].prec &&
+                                    op[op.length - 1][1].assoc == Assoc.Left))) {
+          applyOp();
+        }
+      };
       loop:
       while (true) {
         p.skipWhitespace();
@@ -76,7 +83,7 @@ export class CompoundParse<T> {
             // Intentional fallthrough; if we can't read prefix then read token.
           case "prefix":
             // Read Token
-            const tok = this.parseExpr(p);
+            const tok = this.parseToken(p);
             if (tok === null) {
               // Prefix or infix operator not followed by token, so error.
               return null;
@@ -88,11 +95,7 @@ export class CompoundParse<T> {
             // Read Postfix
             const post = this.parseOp(p, Fixity.Postfix);
             if (post !== null) {
-              while ((op.length > 0) && ((op[op.length - 1][1].prec > post[1].prec) ||
-                                         (op[op.length - 1][1].prec == post[1].prec &&
-                                          op[op.length - 1][1].assoc == Assoc.Left))) {
-                applyOp();
-              }
+              resolveOp(post);
               op.push(post);
               // Apply immediately
               applyOp();
@@ -107,12 +110,8 @@ export class CompoundParse<T> {
               // Postfix operator or token not followed by anything. Not a problem.
               break loop;
             }
-            while ((op.length > 0) && ((op[op.length - 1][1].prec > inf[1].prec) ||
-                                       (op[op.length - 1][1].prec == inf[1].prec &&
-                                        op[op.length - 1][1].assoc == Assoc.Left))) {
-              applyOp();
-            }
-            state = "infix"
+            resolveOp(inf);
+            state = "infix";
             op.push(inf);
             break;
         }

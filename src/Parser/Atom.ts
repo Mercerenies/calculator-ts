@@ -6,6 +6,15 @@ import Complex from '../Numerical/Complex'
 import Numeral from '../Numerical/Numeral'
 import { assert } from '../Assert'
 
+export function parseFloatSoft(p: Parser): Floating | null {
+  const v = parseRegexp(p, /[-+]?\d+(\.\d+)?([eE]\d+)?/);
+  if (v === null)
+    return null;
+  const f = Number.parseFloat(v);
+  assert(!isNaN(f));
+  return new Floating(f);
+}
+
 export function parseFloat(p: Parser): Floating | null {
   const v = parseRegexp(p, /[-+]?\d+\.\d+([eE]\d+)?/);
   if (v === null)
@@ -16,10 +25,17 @@ export function parseFloat(p: Parser): Floating | null {
 }
 
 export function parseInt(p: Parser): bigint | null {
-  const v = parseRegexp(p, /[-+]\d+/);
+  const v = parseRegexp(p, /[-+]?\d+/);
   if (v === null)
     return null;
   return BigInt(v);
+}
+
+function parseInt1(p: Parser): Ratio | null {
+  const v = parseInt(p);
+  if (v === null)
+    return null;
+  return new Ratio(v, BigInt(1));
 }
 
 export function parseRatio(p: Parser): Ratio | null {
@@ -36,10 +52,10 @@ export function parseRatio(p: Parser): Ratio | null {
 export function parseComplex(p: Parser): Complex | null {
   return p.saveExcursion(() => {
     const p1 = parseRegexp(p, /\(\s*/);
-    const re = parseFloat(p);
+    const re = parseFloatSoft(p);
     const comma = parseRegexp(p, /\s*,\s*/);
-    const im = parseFloat(p);
-    const p2 = parseRegexp(p, /\(\s*/);
+    const im = parseFloatSoft(p);
+    const p2 = parseRegexp(p, /\s*\)/);
     if ([p1, re, comma, im, p2].includes(null))
       return null;
     return new Complex(re!.value, im!.value);
@@ -47,7 +63,7 @@ export function parseComplex(p: Parser): Complex | null {
 }
 
 export function parseNumber(p: Parser): Numeral | null {
-  const value = parseRatio(p) || parseFloat(p) || parseComplex(p);
+  const value = parseRatio(p) || parseFloat(p) || parseComplex(p) || parseInt1(p);
   if (value === null)
     return null;
   return new Numeral(value);
@@ -62,5 +78,3 @@ export function parseVariable(p: Parser): string | null {
 export function parseAtom(p: Parser): Numeral | string | null {
   return parseNumber(p) || parseVariable(p);
 }
-
-///// Need to do shunting yard algorithm for compound parser.

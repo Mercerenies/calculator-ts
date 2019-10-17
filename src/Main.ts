@@ -5,6 +5,34 @@ import LispLikePrinter from './Printer/LispLikePrinter'
 import PrettyPrinter from './Printer/PrettyPrinter'
 import Numeral from './Numerical/Numeral'
 import Ratio from './Numerical/Ratio'
+import Parser from './Parser/Parser'
+import { parseFullExpr } from './Parser/Expr'
+
+import * as readline from 'readline'
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+const llp = new LispLikePrinter();
+const pp = new PrettyPrinter();
+
+rl.on('line', (line) => {
+  const parser = new Parser(line);
+  const expr = parseFullExpr(parser);
+  if (expr === null) {
+    console.log("ERROR: Could not parse");
+    console.log("Stopped at " + parser.pos);
+  } else {
+    print(llp, expr);
+    print(pp, expr);
+  }
+});
+
+/*
+let a = rl.prompt();
+console.log(a);
 
 console.log("HELLO");
 
@@ -17,3 +45,4 @@ print(new LispLikePrinter(), example1);
 print(new PrettyPrinter(), example1);
 print(new LispLikePrinter(), example2);
 print(new PrettyPrinter(), example2);
+*/

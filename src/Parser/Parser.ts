@@ -12,7 +12,7 @@ export default class Parser {
   }
 
   private setPos(pos: number): void {
-    this._pos = clamp(this.pos, 0, this.str.length);
+    this._pos = clamp(pos, 0, this.str.length);
   }
 
   get pos(): number {
@@ -49,7 +49,7 @@ export default class Parser {
   }
 
   matchRegexp(re: RegExp): string | null {
-    const re1: RegExp = Object.create(re);
+    const re1: RegExp = new RegExp(re, 'y');
     re1.lastIndex = this.pos;
     const result = this.str.match(re1);
     if (result === null)
@@ -61,8 +61,9 @@ export default class Parser {
 
   parseRegexp(re: RegExp): string | null {
     const str = this.matchRegexp(re);
-    if (str !== null)
+    if (str !== null) {
       this.advance(str.length);
+    }
     return str;
   }
 

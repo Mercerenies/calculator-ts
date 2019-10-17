@@ -9,8 +9,7 @@ export default class Expr {
   private head: string;
   private args: Expr[];
 
-  constructor(value: Numeral);
-  constructor(variable: string);
+  constructor(value: Numeral | string);
   constructor(head: string, args: Expr[]);
   constructor(a: any, b?: any) {
     if (a instanceof Numeral) {

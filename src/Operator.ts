@@ -52,14 +52,14 @@ export const StdOperatorTable: Map<string, Operator> =
       assoc: Assoc.Left,
       prec: 50,
     }],
-    ["fact", {
-      name: "!",
+    ["dfact", {
+      name: "!!",
       fixity: Fixity.Postfix,
       assoc: Assoc.Left,
       prec: 100,
     }],
-    ["dfact", {
-      name: "!!",
+    ["fact", {
+      name: "!",
       fixity: Fixity.Postfix,
       assoc: Assoc.Left,
       prec: 100,
