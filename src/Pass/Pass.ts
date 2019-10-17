@@ -1,8 +1,9 @@
 
 import Expr from '../Expr'
+import { Mode } from '../Mode'
 
 export interface Pass {
-  (expr: Expr): Expr;
+  (expr: Expr, mode: Mode): Expr;
 }
 
 export function id(expr: Expr): Expr {
@@ -10,39 +11,39 @@ export function id(expr: Expr): Expr {
 }
 
 export function compose(passes: Pass[]): Pass {
-  return function(e) {
+  return function(e, m) {
     for (const p of passes) {
-      e = p(e);
+      e = p(e, m);
     }
     return e;
   };
 }
 
-export function runPassOnceTD(pass: Pass, expr: Expr): Expr {
-  expr = pass(expr);
+export function runPassOnceTD(pass: Pass, expr: Expr, mode: Mode): Expr {
+  expr = pass(expr, mode);
   expr.ifCompound(function(head, tail) {
     expr = new Expr(head, tail.map(function (t) {
-      return runPassOnceTD(pass, t);
+      return runPassOnceTD(pass, t, mode);
     }));
   });
   return expr;
 }
 
-export function runPassOnceBU(pass: Pass, expr: Expr): Expr {
+export function runPassOnceBU(pass: Pass, expr: Expr, mode: Mode): Expr {
   expr.ifCompound(function(head, tail) {
     expr = new Expr(head, tail.map(function (t) {
-      return runPassOnceBU(pass, t);
+      return runPassOnceBU(pass, t, mode);
     }));
   });
-  expr = pass(expr);
+  expr = pass(expr, mode);
   return expr;
 }
 
-function runPass(pass: Pass, expr: Expr,
-                 iter: (pass: Pass, expr: Expr) => Expr,
+function runPass(pass: Pass, expr: Expr, mode: Mode,
+                 iter: (pass: Pass, expr: Expr, mode: Mode) => Expr,
                  max: number = Infinity): Expr {
   for (let i = 0; i < max; i++) {
-    const expr1 = iter(pass, expr);
+    const expr1 = iter(pass, expr, mode);
     if (expr1.eq(expr))
       return expr;
     expr = expr1;
@@ -50,10 +51,10 @@ function runPass(pass: Pass, expr: Expr,
   return expr;
 }
 
-export function runPassTD(pass: Pass, expr: Expr, max: number = Infinity): Expr {
-  return runPass(pass, expr, runPassOnceTD, max);
+export function runPassTD(pass: Pass, expr: Expr, mode: Mode, max: number = Infinity): Expr {
+  return runPass(pass, expr, mode, runPassOnceTD, max);
 }
 
-export function runPassBU(pass: Pass, expr: Expr, max: number = Infinity): Expr {
-  return runPass(pass, expr, runPassOnceBU, max);
+export function runPassBU(pass: Pass, expr: Expr, mode: Mode, max: number = Infinity): Expr {
+  return runPass(pass, expr, mode, runPassOnceBU, max);
 }
