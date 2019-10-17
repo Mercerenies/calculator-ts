@@ -21,18 +21,21 @@ export class ParseError {
     return base;
   }
 
-  static join<T>(err: (T | ParseError)[]): T | ParseError {
-    if (err.length == 0)
+  static join<T>(err: Iterator<T | ParseError>): T | ParseError {
+    const first = err.next();
+    if (first.done)
       return new ParseError(0, "", []);
-    return err.reduce((a, b) => {
-      if (!(a instanceof ParseError))
-        return a;
+    let acc = first.value;
+    if (!(acc instanceof ParseError))
+      return acc;
+    for (const b of { [Symbol.iterator]() { return err; } }) {
       if (!(b instanceof ParseError))
         return b;
-      return new ParseError(Math.min(a.pos, b.pos),
-                            a.message + ", " + b.message,
-                            a.expecting.concat(b.expecting));
-    });
+      acc = new ParseError(Math.min(acc.pos, b.pos),
+                           acc.message + ", " + b.message,
+                           acc.expecting.concat(b.expecting));
+    }
+    return acc;
   }
 
 }
