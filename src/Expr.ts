@@ -1,6 +1,9 @@
 
+import Ratio from './Numerical/Ratio'
+import Floating from './Numerical/Floating'
+import Complex from './Numerical/Complex'
 import Numeral from './Numerical/Numeral'
-import { noop } from './Util'
+import { noop, never } from './Util'
 
 export default class Expr {
 
@@ -71,6 +74,25 @@ export default class Expr {
           (this.args.every((a, idx) => a.eq(that.args[idx])))
         );
     }
+  }
+
+  static from(n : bigint | number | string | Ratio | Floating | Complex | Numeral): Expr {
+    if ((n instanceof Numeral) || (typeof n == 'string')) {
+      return new Expr(n);
+    }
+    if ((n instanceof Ratio) || (n instanceof Floating) || (n instanceof Complex)) {
+      return new Expr(new Numeral(n));
+    }
+    if (typeof(n) == 'bigint') {
+      return new Expr(new Numeral(Ratio.fromInt(n)));
+    }
+    if (typeof(n) == 'number') {
+      if (Number.isInteger(n))
+        return new Expr(new Numeral(Ratio.fromInt(BigInt(n))));
+      else
+        return new Expr(new Numeral(new Floating(n)));
+    }
+    return never(n);
   }
 
 }
