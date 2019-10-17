@@ -22,7 +22,7 @@ const pp = new PrettyPrinter();
 rl.on('line', (line) => {
   const expr = parseExprFromLine(line);
   if (expr instanceof ParseError) {
-    console.log(expr);
+    console.log(expr.toString());
   } else {
     print(llp, expr);
     print(pp, expr);

@@ -15,7 +15,7 @@ export class ParseError {
     if (this.message == "")
       base += ` Expecting ${this.expecting.join(', ')}`;
     else if (this.expecting.length == 0)
-      base += this.message;
+      base += " " + this.message;
     else
       base += ` ${this.message} (Expecting ${this.expecting.join(', ')})`;
     return base;

@@ -92,6 +92,6 @@ export function parseExprFromLine(s: string): Expr | ParseError {
   if (result instanceof ParseError)
     return result;
   if (p.inBounds())
-    return p.fail("parsing stopped"); // Didn't read the whole line
+    return p.fail("Parsing stopped"); // Didn't read the whole line
   return result;
 }
