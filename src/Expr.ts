@@ -59,6 +59,45 @@ export default class Expr {
     return this;
   }
 
+  ifCompound0(f: (a: string) => void, g: () => void = noop): Expr {
+    let handled = false;
+    this.ifCompound(function(head, tail) {
+      if (tail.length == 0) {
+        handled = true;
+        f(head);
+      }
+    });
+    if (!handled)
+      g();
+    return this;
+  }
+
+  ifCompound1(f: (a: string, b: Expr) => void, g: () => void = noop): Expr {
+    let handled = false;
+    this.ifCompound(function(head, tail) {
+      if (tail.length == 1) {
+        handled = true;
+        f(head, tail[0]);
+      }
+    });
+    if (!handled)
+      g();
+    return this;
+  }
+
+  ifCompound2(f: (a: string, b: Expr, c: Expr) => void, g: () => void = noop): Expr {
+    let handled = false;
+    this.ifCompound(function(head, tail) {
+      if (tail.length == 2) {
+        handled = true;
+        f(head, tail[1], tail[2]);
+      }
+    });
+    if (!handled)
+      g();
+    return this;
+  }
+
   eq(that: Expr): boolean {
     if (this.nature != that.nature)
       return false;
