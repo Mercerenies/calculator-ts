@@ -44,18 +44,18 @@ export default class Expr {
     }
   }
 
-  ifNumber(f: (a: Numeral) => void): Expr {
-    this.dispatch(f, noop, noop);
+  ifNumber(f: (a: Numeral) => void, g: () => void = noop): Expr {
+    this.dispatch(f, g, g);
     return this;
   }
 
-  ifVar(f: (a: string) => void): Expr {
-    this.dispatch(noop, f, noop);
+  ifVar(f: (a: string) => void, g: () => void = noop): Expr {
+    this.dispatch(g, f, g);
     return this;
   }
 
-  ifCompound(f: (a: string, b: Expr[]) => void): Expr {
-    this.dispatch(noop, noop, f);
+  ifCompound(f: (a: string, b: Expr[]) => void, g: () => void = noop): Expr {
+    this.dispatch(g, g, f);
     return this;
   }
 
