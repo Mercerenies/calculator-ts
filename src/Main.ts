@@ -8,6 +8,9 @@ import Ratio from './Numerical/Ratio'
 import Parser from './Parser/Parser'
 import { parseExprFromLine } from './Parser/Expr'
 import { ParseError } from './Parser/Error'
+import { Pass, compose, runPassTD } from './Pass/Pass'
+import * as Normalize from './Pass/Normalize'
+import { Mode, DefaultMode } from './Mode'
 
 import * as readline from 'readline'
 
@@ -18,6 +21,11 @@ const rl = readline.createInterface({
 
 const llp = new LispLikePrinter();
 const pp = new PrettyPrinter();
+const mode = DefaultMode;
+
+const SAFETY = 1000;
+
+const samplePass = compose([Normalize.normalizeNegatives]);
 
 rl.on('line', (line) => {
   const expr = parseExprFromLine(line);
@@ -26,6 +34,9 @@ rl.on('line', (line) => {
   } else {
     print(llp, expr);
     print(pp, expr);
+    const expr1 = runPassTD(samplePass, expr, mode, SAFETY);
+    print(llp, expr1);
+    print(pp, expr1);
   }
 });
 

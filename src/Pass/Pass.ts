@@ -48,6 +48,8 @@ function runPass(pass: Pass, expr: Expr, mode: Mode,
       return expr;
     expr = expr1;
   }
+  // TODO Remove this warning; I just want it here for debugging
+  console.warn(`Exceeded ${max} pass limit!`);
   return expr;
 }
 
