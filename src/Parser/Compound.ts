@@ -1,11 +1,12 @@
 
 import Parser, { parseLiteral, parseRegexp } from './Parser'
+import { ParseError } from './Error'
 import { Operator, Fixity, Assoc } from '../Operator'
 import { assert, assertDefined } from '../Assert'
 
 export class CompoundParse<T> {
   private table: Map<string, Operator>;
-  private token: (p: Parser) => T | null;
+  private token: (p: Parser) => T | ParseError;
   private fromInfix: (a: T, s: string, b: T) => T;
   private fromPrefix: (s: string, b: T) => T;
   private fromPostfix: (a: T, s: string) => T;
@@ -18,27 +19,27 @@ export class CompoundParse<T> {
     this.fromPostfix = args.fromPostfix;
   }
 
-  parseToken(p: Parser): T | null {
+  parseToken(p: Parser): T | ParseError {
     return this.token(p);
   }
 
-  parseOp(p: Parser, fixity: Fixity): [string, Operator] | null {
+  parseOp(p: Parser, fixity: Fixity): [string, Operator] | ParseError {
     return p.saveExcursion(() => {
       p.skipWhitespace();
       for (const [name, op] of this.table.entries()) {
         if (op.fixity !== fixity)
           continue;
         const result = p.parseLiteral(op.name.trim());
-        if (result !== null) {
+        if (!(result instanceof ParseError)) {
           p.skipWhitespace();
           return [name, op];
         }
       }
-      return null;
+      return p.expecting([`${Fixity[fixity]} operator`]);
     });
   }
 
-  parseExpr(p: Parser): T | null {
+  parseExpr(p: Parser): T | ParseError {
     return p.saveExcursion(() => {
       const output: T[] = [];
       const op: [string, Operator][] = [];
@@ -75,7 +76,7 @@ export class CompoundParse<T> {
           case "infix":
             // Read Prefix
             const pre = this.parseOp(p, Fixity.Prefix);
-            if (pre !== null) {
+            if (!(pre instanceof ParseError)) {
               op.push(pre);
               state = "prefix";
               break;
@@ -84,9 +85,9 @@ export class CompoundParse<T> {
           case "prefix":
             // Read Token
             const tok = this.parseToken(p);
-            if (tok === null) {
+            if (tok instanceof ParseError) {
               // Prefix or infix operator not followed by token, so error.
-              return null;
+              return tok; // TODO We could marginally improve the error message here
             }
             output.push(tok);
             state = "token";
@@ -94,7 +95,7 @@ export class CompoundParse<T> {
           case "token":
             // Read Postfix
             const post = this.parseOp(p, Fixity.Postfix);
-            if (post !== null) {
+            if (!(post instanceof ParseError)) {
               resolveOp(post);
               op.push(post);
               // Apply immediately
@@ -106,7 +107,7 @@ export class CompoundParse<T> {
           case "postfix":
             // Read Infix
             const inf = this.parseOp(p, Fixity.Infix);
-            if (inf === null) {
+            if (inf instanceof ParseError) {
               // Postfix operator or token not followed by anything. Not a problem.
               break loop;
             }
@@ -131,7 +132,7 @@ export class CompoundParse<T> {
 
 export interface CompoundParseArgs<T> {
   table: Map<string, Operator>;
-  token: (p: Parser) => T | null;
+  token: (p: Parser) => T | ParseError;
   fromInfix: (a: T, s: string, b: T) => T;
   fromPrefix: (s: string, b: T) => T;
   fromPostfix: (a: T, s: string) => T;

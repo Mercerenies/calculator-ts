@@ -1,6 +1,7 @@
 
 import { clamp } from '../Util'
 import { ParseError, fail, expecting } from './Error'
+import { assert } from '../Assert'
 
 export default class Parser {
 
@@ -39,13 +40,11 @@ export default class Parser {
     return this.pos >= 0 && this.pos < this.str.length;
   }
 
-  saveExcursion<T>(f: () => T | null): T | null {
+  saveExcursion<T>(f: () => T | ParseError): T | ParseError {
     let pos = this.pos;
     const result = f();
-    if (result === null) {
-      this.setPos(pos);
-      return null;
-    }
+    if (result instanceof ParseError)
+      this.setPos(pos); // Error, so revert
     return result;
   }
 
@@ -57,44 +56,43 @@ export default class Parser {
     return expecting(this.pos, values);
   }
 
-  matchRegexp(re: RegExp): string | null {
+  matchRegexp(re: RegExp): string | ParseError {
     const re1: RegExp = new RegExp(re, 'y');
     re1.lastIndex = this.pos;
     const result = this.str.match(re1);
-    if (result === null)
-      return null;
-    if (result.index !== this.pos)
-      return null;
+    if ((result === null) || (result.index !== this.pos))
+      return this.fail(`Could not match regexp ${re}`);
     return result[0];
   }
 
-  parseRegexp(re: RegExp): string | null {
+  parseRegexp(re: RegExp): string | ParseError {
     const str = this.matchRegexp(re);
-    if (str !== null) {
+    if (!(str instanceof ParseError)) {
       this.advance(str.length);
     }
     return str;
   }
 
-  parseLiteral(str: string): string | null {
+  parseLiteral(str: string): string | ParseError {
     if (this.str.startsWith(str, this.pos)) {
       this.advance(str.length);
       return str;
     }
-    return null;
+    return this.expecting([`"${str}"`]);
   }
 
   skipWhitespace(): void {
-    this.parseRegexp(/\s*/);
+    const result = this.parseRegexp(/\s*/);
+    assert(!(result instanceof ParseError));
   }
 
 }
 
-export function parseRegexp(p: Parser, re: RegExp): string | null {
+export function parseRegexp(p: Parser, re: RegExp): string | ParseError {
   return p.parseRegexp(re);
 }
 
-export function parseLiteral(p: Parser, str: string): string | null {
+export function parseLiteral(p: Parser, str: string): string | ParseError {
   return p.parseLiteral(str);
 }
 

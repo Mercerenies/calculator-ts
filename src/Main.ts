@@ -7,6 +7,7 @@ import Numeral from './Numerical/Numeral'
 import Ratio from './Numerical/Ratio'
 import Parser from './Parser/Parser'
 import { parseExprFromLine } from './Parser/Expr'
+import { ParseError } from './Parser/Error'
 
 import * as readline from 'readline'
 
@@ -20,8 +21,8 @@ const pp = new PrettyPrinter();
 
 rl.on('line', (line) => {
   const expr = parseExprFromLine(line);
-  if (expr === null) {
-    console.log("ERROR: Could not parse");
+  if (expr instanceof ParseError) {
+    console.log(expr);
   } else {
     print(llp, expr);
     print(pp, expr);

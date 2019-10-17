@@ -32,8 +32,11 @@ export class ParseError {
     for (const b of { [Symbol.iterator]() { return iter; } }) {
       if (!(b instanceof ParseError))
         return b;
+      let message: string = (acc.message != "" && b.message != "") ?
+        `${acc.message}, ${b.message}` :
+        `${acc.message}${b.message}`;
       acc = new ParseError(Math.min(acc.pos, b.pos),
-                           acc.message + ", " + b.message,
+                           message,
                            acc.expecting.concat(b.expecting));
     }
     return acc;
