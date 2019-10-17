@@ -59,12 +59,12 @@ export default class Expr {
     return this;
   }
 
-  ifCompound0(f: (a: string) => void, g: () => void = noop): Expr {
+  ifCompoundN(n: number, f: (a: string, b: Expr[]) => void, g: () => void = noop): Expr {
     let handled = false;
     this.ifCompound(function(head, tail) {
-      if (tail.length == 0) {
+      if (tail.length == n) {
         handled = true;
-        f(head);
+        f(head, tail);
       }
     });
     if (!handled)
@@ -72,12 +72,12 @@ export default class Expr {
     return this;
   }
 
-  ifCompound1(f: (a: string, b: Expr) => void, g: () => void = noop): Expr {
+  ifCompoundHead(s: string, f: (b: Expr[]) => void, g: () => void = noop): Expr {
     let handled = false;
     this.ifCompound(function(head, tail) {
-      if (tail.length == 1) {
+      if (head == s) {
         handled = true;
-        f(head, tail[0]);
+        f(tail);
       }
     });
     if (!handled)
@@ -85,12 +85,13 @@ export default class Expr {
     return this;
   }
 
-  ifCompound2(f: (a: string, b: Expr, c: Expr) => void, g: () => void = noop): Expr {
+  ifCompoundHeadN(s: string, n: number,
+                  f: (b: Expr[]) => void, g: () => void = noop): Expr {
     let handled = false;
     this.ifCompound(function(head, tail) {
-      if (tail.length == 2) {
+      if ((head == s) && (tail.length == n)) {
         handled = true;
-        f(head, tail[1], tail[2]);
+        f(tail);
       }
     });
     if (!handled)
