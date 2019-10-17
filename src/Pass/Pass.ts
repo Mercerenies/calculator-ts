@@ -38,12 +38,22 @@ export function runPassOnceBU(pass: Pass, expr: Expr): Expr {
   return expr;
 }
 
-/*
 function runPass(pass: Pass, expr: Expr,
                  iter: (pass: Pass, expr: Expr) => Expr,
                  max: number = Infinity): Expr {
   for (let i = 0; i < max; i++) {
     const expr1 = iter(pass, expr);
+    if (expr1.eq(expr))
+      return expr;
+    expr = expr1;
   }
+  return expr;
 }
-*/
+
+export function runPassTD(pass: Pass, expr: Expr, max: number = Infinity): Expr {
+  return runPass(pass, expr, runPassOnceTD, max);
+}
+
+export function runPassBU(pass: Pass, expr: Expr, max: number = Infinity): Expr {
+  return runPass(pass, expr, runPassOnceBU, max);
+}
