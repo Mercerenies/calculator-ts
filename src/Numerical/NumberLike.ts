@@ -7,5 +7,6 @@ export default interface NumberLike<T> {
   mul(that: T): T;
   recip(): T;
   div(that: T): T;
+  eq(that: T): boolean;
 
 }

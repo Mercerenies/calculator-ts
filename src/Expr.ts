@@ -56,4 +56,21 @@ export default class Expr {
     return this;
   }
 
+  eq(that: Expr): boolean {
+    if (this.nature != that.nature)
+      return false;
+    switch (this.nature) {
+      case "number":
+        return this.value == that.value;
+      case "variable":
+        return this.head == that.head;
+      case "compound":
+        return (
+          (this.head == that.head) &&
+          (this.args.length == that.args.length) &&
+          (this.args.every((a, idx) => a.eq(that.args[idx])))
+        );
+    }
+  }
+
 }

@@ -54,6 +54,10 @@ export default class Ratio implements NumberLike<Ratio> {
       return this.num.toString() + ":" + this.den.toString();
   }
 
+  eq(that: Ratio): boolean {
+    return this.num === that.num && this.den === that.den;
+  }
+
   static fromInt(a: bigint): Ratio {
     return new Ratio(a, BigInt(1));
   }

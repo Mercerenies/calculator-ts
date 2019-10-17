@@ -65,6 +65,10 @@ export default class Numeral implements NumberLike<Numeral> {
     return this.mul(that.recip());
   }
 
+  eq(that: Numeral) {
+    return binaryPromoteU(this, that, (a, b) => a.eq(b));
+  }
+
   toString(): string {
     return unaryDispatchU(this, (a) => a.toString());
   }

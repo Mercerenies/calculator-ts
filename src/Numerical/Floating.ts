@@ -35,6 +35,10 @@ export default class Floating implements NumberLike<Floating> {
     return this.mul(that.recip());
   }
 
+  eq(that: Floating): boolean {
+    return (isNaN(this.value) && isNaN(that.value)) || (this.value == that.value);
+  }
+
   toString(): string {
     return this.value.toString();
   }

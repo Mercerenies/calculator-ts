@@ -1,5 +1,6 @@
 
 import NumberLike from './NumberLike'
+import Floating from './Floating'
 
 export default class Complex implements NumberLike<Complex> {
 
@@ -40,6 +41,13 @@ export default class Complex implements NumberLike<Complex> {
 
   recip(): Complex {
     return new Complex(1, 0).div(this);
+  }
+
+  eq(that: Complex): boolean {
+    return (
+      (new Floating(this.real) == new Floating(that.real)) &&
+      (new Floating(this.imag) == new Floating(that.imag))
+    );
   }
 
   toString(): string {
