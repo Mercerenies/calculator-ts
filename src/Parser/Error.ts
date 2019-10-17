@@ -21,10 +21,14 @@ export class ParseError {
     return base;
   }
 
-  static join(err: ParseError[]): ParseError {
+  static join<T>(err: (T | ParseError)[]): T | ParseError {
     if (err.length == 0)
       return new ParseError(0, "", []);
     return err.reduce((a, b) => {
+      if (!(a instanceof ParseError))
+        return a;
+      if (!(b instanceof ParseError))
+        return b;
       return new ParseError(Math.min(a.pos, b.pos),
                             a.message + ", " + b.message,
                             a.expecting.concat(b.expecting));
