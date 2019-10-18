@@ -25,7 +25,9 @@ const mode = DefaultMode;
 
 const SAFETY = 1000;
 
-const samplePass = compose([Normalize.normalizeNegatives]);
+const samplePass = compose([
+  Normalize.normalizeNegatives, Normalize.levelStdOperators,
+]);
 
 rl.on('line', (line) => {
   const expr = parseExprFromLine(line);
