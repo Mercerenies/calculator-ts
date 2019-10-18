@@ -27,6 +27,7 @@ const SAFETY = 1000;
 
 const samplePass = compose([
   Normalize.normalizeNegatives, Normalize.levelStdOperators,
+  Normalize.simplifyRationals,
 ]);
 
 rl.on('line', (line) => {

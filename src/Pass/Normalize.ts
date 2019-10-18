@@ -40,20 +40,19 @@ export function levelStdOperators(expr: Expr): Expr {
 }
 
 export function simplifyRationals(expr: Expr): Expr {
-  /////
-  // This is three very similar passes bundled into one.
+  // This is three related passes bundled into one.
 
   // (a/b)/c ==> a/(bc)
   expr.ifCompoundHeadN("/", 2, function([ab, c]) {
     ab.ifCompoundHeadN("/", 2, function([a, b]) {
-      return new Expr("/", [a, new Expr("*", [b, c])]);
+      expr = new Expr("/", [a, new Expr("*", [b, c])]);
     });
   });
 
   // a/(b/c) ==> (ca)/b
   expr.ifCompoundHeadN("/", 2, function([a, bc]) {
     bc.ifCompoundHeadN("/", 2, function([b, c]) {
-      return new Expr("/", [new Expr("*", [c, a]), b]);
+      expr = new Expr("/", [new Expr("*", [c, a]), b]);
     });
   });
 
