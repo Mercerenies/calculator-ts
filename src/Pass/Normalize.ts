@@ -56,5 +56,7 @@ export function simplifyRationals(expr: Expr): Expr {
     });
   });
 
+  /////
+
   return expr;
 }
