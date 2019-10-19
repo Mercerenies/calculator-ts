@@ -99,6 +99,10 @@ export default class Expr {
     return this;
   }
 
+  hasHead(s: string): boolean {
+    return (this.nature == "compound") && (this.head == s);
+  }
+
   eq(that: Expr): boolean {
     if (this.nature != that.nature)
       return false;

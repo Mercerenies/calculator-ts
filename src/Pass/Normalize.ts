@@ -1,5 +1,8 @@
 
 import Expr from '../Expr'
+import Shape from '../Shape'
+import { Mode } from '../Mode'
+import * as Compound from '../Compound'
 
 export function normalizeNegatives(expr: Expr): Expr {
   // a - b ==> a + (-1) * b
@@ -39,7 +42,7 @@ export function levelStdOperators(expr: Expr): Expr {
   return levelOperators(expr, ["+", "*"]);
 }
 
-export function simplifyRationals(expr: Expr): Expr {
+export function simplifyRationals(expr: Expr, mode: Mode): Expr {
   // This is three related passes bundled into one.
 
   // (a/b)/c ==> a/(bc)
@@ -56,7 +59,31 @@ export function simplifyRationals(expr: Expr): Expr {
     });
   });
 
-  /////
+  // a(b/c)d ==> (abd)/c
+  expr.ifCompoundHead("*", function(ts) {
+    if (!ts.some((e) => e.hasHead("/"))) {
+      // If there's no division, don't bother triggering it.
+      return;
+    }
+    if (ts.every((e) => Shape.multiplicationCommutes(Shape.of(e, mode.vector)))) {
+      // If multiplication isn't commutative, then it's a dangerous
+      // operation.
+      return;
+    }
+    const num: Expr[] = [];
+    const den: Expr[] = [];
+    for (const e of ts) {
+      e.ifCompoundHeadN("/", 2, function([a, b]) {
+        // Separate fractions.
+        num.push(a);
+        den.push(b);
+      }, function() {
+        // Leave non-fractions alone in the numerator.
+        num.push(e);
+      });
+    }
+    expr = new Expr("/", [Compound.mul(num), Compound.mul(den)]);
+  });
 
   return expr;
 }
