@@ -77,6 +77,10 @@ export default class Numeral implements NumberLike<Numeral> {
     return numeral(Ratio.zero());
   }
 
+  static one(): Numeral {
+    return numeral(Ratio.one());
+  }
+
 }
 
 export enum Level {
