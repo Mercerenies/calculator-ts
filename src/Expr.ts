@@ -44,6 +44,18 @@ export default class Expr {
     }
   }
 
+  isNumber(): boolean {
+    return this.nature == "number";
+  }
+
+  isVar(): boolean {
+    return this.nature == "variable";
+  }
+
+  isCompound(): boolean {
+    return this.nature == "compound";
+  }
+
   ifNumber(f: (a: Numeral) => void, g: () => void = noop): Expr {
     this.dispatch(f, g, g);
     return this;
