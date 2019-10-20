@@ -73,6 +73,18 @@ export default class Numeral implements NumberLike<Numeral> {
     return unaryDispatchU(this, (a) => a.toString());
   }
 
+  isRational(): boolean {
+    return level === Level.Rational;
+  }
+
+  isFloating(): boolean {
+    return level === Level.Floating;
+  }
+
+  isComplex(): boolean {
+    return level === Level.Complex;
+  }
+
   static zero(): Numeral {
     return numeral(Ratio.zero());
   }

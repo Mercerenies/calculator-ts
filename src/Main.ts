@@ -11,6 +11,7 @@ import { ParseError } from './Parser/Error'
 import { Pass, compose, runPassTD } from './Pass/Pass'
 import * as Normalize from './Pass/Normalize'
 import * as Factoring from './Pass/Factoring'
+import * as Fold from './Pass/Fold'
 import { Mode, DefaultMode } from './Mode'
 
 import * as readline from 'readline'
@@ -30,6 +31,7 @@ const samplePass = compose([
   Normalize.normalizeNegatives, Normalize.levelStdOperators,
   Normalize.simplifyRationals, Factoring.collectLikeFactors,
   Factoring.collectLikeTerms, Normalize.flattenNestedExponents,
+  Fold.foldConstants,
 ]);
 
 rl.on('line', (line) => {

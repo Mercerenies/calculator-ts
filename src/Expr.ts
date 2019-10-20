@@ -120,7 +120,7 @@ export default class Expr {
       return false;
     switch (this.nature) {
       case "number":
-        return this.value == that.value;
+        return this.value.eq(that.value);
       case "variable":
         return this.head == that.head;
       case "compound":

@@ -2,6 +2,10 @@
 import Expr from '../Expr'
 import { Mode } from '../Mode'
 
+// For debugging purposes
+//import LispLikePrinter from '../Printer/LispLikePrinter'
+//import { print } from '../Printer'
+
 export interface Pass {
   (expr: Expr, mode: Mode): Expr;
 }
