@@ -18,7 +18,7 @@ export default class Ratio implements NumberLike<Ratio> {
   }
 
   add(that: Ratio): Ratio {
-    const num = this.num * that.den + that.num + this.den;
+    const num = this.num * that.den + that.num * this.den;
     const den = this.den * that.den;
     return new Ratio(num, den);
   }
