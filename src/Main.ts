@@ -10,6 +10,7 @@ import { parseExprFromLine } from './Parser/Expr'
 import { ParseError } from './Parser/Error'
 import { Pass, compose, runPassTD } from './Pass/Pass'
 import * as Normalize from './Pass/Normalize'
+import * as Factoring from './Pass/Factoring'
 import { Mode, DefaultMode } from './Mode'
 
 import * as readline from 'readline'
@@ -27,7 +28,7 @@ const SAFETY = 1000;
 
 const samplePass = compose([
   Normalize.normalizeNegatives, Normalize.levelStdOperators,
-  Normalize.simplifyRationals,
+  Normalize.simplifyRationals, Factoring.collectLikeFactors
 ]);
 
 rl.on('line', (line) => {
