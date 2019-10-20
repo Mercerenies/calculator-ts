@@ -87,3 +87,13 @@ export function simplifyRationals(expr: Expr, mode: Mode): Expr {
 
   return expr;
 }
+
+export function flattenNestedExponents(expr: Expr): Expr {
+  // (a^b)^c ==> a^(b*c)
+  expr.ifCompoundHeadN("^", 2, function([ab, c]) {
+    ab.ifCompoundHeadN("^", 2, function([a, b]) {
+      expr = new Expr("^", [a, new Expr("*", [b, c])]);
+    });
+  });
+  return expr;
+}

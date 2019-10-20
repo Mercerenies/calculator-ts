@@ -28,7 +28,8 @@ const SAFETY = 1000;
 
 const samplePass = compose([
   Normalize.normalizeNegatives, Normalize.levelStdOperators,
-  Normalize.simplifyRationals, Factoring.collectLikeFactors
+  Normalize.simplifyRationals, Factoring.collectLikeFactors,
+  Factoring.collectLikeTerms, Normalize.flattenNestedExponents,
 ]);
 
 rl.on('line', (line) => {
