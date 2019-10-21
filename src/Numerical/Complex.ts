@@ -43,10 +43,31 @@ export default class Complex implements NumberLike<Complex> {
     return new Complex(1, 0).div(this);
   }
 
+  abs(): Floating {
+    return new Floating(Math.sqrt(this.real * this.real + this.imag * this.imag));
+  }
+
+  exp(): Complex {
+    const c = Math.exp(this.real);
+    const re = Math.cos(this.imag);
+    const im = Math.sin(this.real);
+    return new Complex(re * c, im * c);
+  }
+
+  ln(): Complex {
+    const re = Math.log(this.abs().value);
+    const im = Math.atan2(this.imag, this.real);
+    return new Complex(re, im);
+  }
+
+  pow(that: Complex): Complex {
+    return (that.mul(this.ln())).exp();
+  }
+
   eq(that: Complex): boolean {
     return (
-      (new Floating(this.real) == new Floating(that.real)) &&
-      (new Floating(this.imag) == new Floating(that.imag))
+      (new Floating(this.real).eq(new Floating(that.real))) &&
+      (new Floating(this.imag).eq(new Floating(that.imag)))
     );
   }
 

@@ -58,6 +58,14 @@ export default class Ratio implements NumberLike<Ratio> {
     return this.num === that.num && this.den === that.den;
   }
 
+  lt(that: Ratio): boolean {
+    return (this.sub(that).num < 0);
+  }
+
+  gt(that: Ratio): boolean {
+    return (this.sub(that).num > 0);
+  }
+
   static fromInt(a: bigint): Ratio {
     return new Ratio(a, BigInt(1));
   }

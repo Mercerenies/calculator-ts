@@ -35,8 +35,28 @@ export default class Floating implements NumberLike<Floating> {
     return this.mul(that.recip());
   }
 
+  exp(): Floating {
+    return new Floating(Math.exp(this.value));
+  }
+
+  ln(): Floating {
+    return new Floating(Math.log(this.value));
+  }
+
+  pow(that: Floating): Floating {
+    return (that.mul(this.ln())).exp();
+  }
+
   eq(that: Floating): boolean {
     return (isNaN(this.value) && isNaN(that.value)) || (this.value == that.value);
+  }
+
+  lt(that: Floating): boolean {
+    return this.value < that.value;
+  }
+
+  gt(that: Floating): boolean {
+    return this.value > that.value;
   }
 
   toString(): string {

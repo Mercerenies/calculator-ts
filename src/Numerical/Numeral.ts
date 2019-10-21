@@ -65,6 +65,22 @@ export default class Numeral implements NumberLike<Numeral> {
     return this.mul(that.recip());
   }
 
+  exp(): Numeral {
+    return unaryDispatchFloat(this,
+                              (a) => numeral(a.exp()),
+                              (a) => numeral(a.exp()));
+  }
+
+  ln(): Numeral {
+    return unaryDispatchFloat(this,
+                              (a) => numeral(a.ln()),
+                              (a) => numeral(a.ln()));
+  }
+
+  pow(that: Numeral): Numeral {
+    return pow(this, that);
+  }
+
   eq(that: Numeral) {
     return binaryPromoteU(this, that, (a, b) => a.eq(b));
   }
@@ -131,6 +147,12 @@ export function unaryDispatchU<T>(num: Numeral, g: <U extends NumberLike<U>>(a: 
   return unaryDispatch(num, g, g, g);
 }
 
+export function unaryDispatchFloat<T>(num: Numeral,
+                                      f: (a: Floating) => T,
+                                      c: (a: Complex) => T): T {
+  return unaryDispatch(num, (a) => f(rToF(a)), f, c);
+}
+
 export function binaryPromote<T>(a: Numeral,
                                  b: Numeral,
                                  r: (a: Ratio, b: Ratio) => T,
@@ -166,4 +188,100 @@ export function binaryPromote<T>(a: Numeral,
 export function binaryPromoteU<T>(a: Numeral, b: Numeral,
                                   g: <U extends NumberLike<U>>(a: U, b: U) => T): T {
   return binaryPromote(a, b, g, g, g);
+}
+
+function npow(x: Numeral, b: bigint): Numeral {
+  if (b == BigInt(0)) {
+    return Numeral.one();
+  } else if (b < BigInt(0)) {
+    return npow(x.recip(), - b);
+  } else {
+    if (b % BigInt(2) == BigInt(0)) {
+      const y = npow(x, b / BigInt(2));
+      return y.mul(y);
+    } else {
+      const y = npow(x, b / BigInt(2));
+      return y.mul(y).mul(x);
+    }
+  }
+}
+
+function pow(x: Numeral, y: Numeral): Numeral {
+
+  // First, deal with the "base" cases of zero.
+  if (y.eq(Numeral.zero()))
+    return Numeral.one();
+  if (x.eq(Numeral.zero()))
+    return Numeral.zero();
+
+  return x.dispatch(
+    (a) => {
+      return y.dispatch(
+        (b) => {
+          // Ratio / Ratio
+          if (b.den == BigInt(1)) {
+            return npow(x, b.num);
+          } else if (a.gt(Ratio.zero())) {
+            return numeral(rToF(a).pow(rToF(b)));
+          } else {
+            return numeral(rToC(a).pow(rToC(b)));
+          }
+        },
+        (b) => {
+          // Ratio / Float
+          if (a.gt(Ratio.zero())) {
+            return numeral(rToF(a).pow(b));
+          } else {
+            return numeral(rToC(a).pow(fToC(b)));
+          }
+        },
+        (b) => {
+          // Ratio / Complex
+          return numeral(rToC(a).pow(b));
+        },
+      );
+    },
+    (a) => {
+      return y.dispatch(
+        (b) => {
+          // Float / Ratio
+          if (b.den == BigInt(1)) {
+            return npow(x, b.num);
+          } else if (a.gt(Floating.zero())) {
+            return numeral(a.pow(rToF(b)));
+          } else {
+            return numeral(fToC(a).pow(rToC(b)));
+          }
+        },
+        (b) => {
+          // Float / Float
+          if (a.gt(Floating.zero())) {
+            return numeral(a.pow(b));
+          } else {
+            return numeral(fToC(a).pow(fToC(b)));
+          }
+        },
+        (b) => {
+          // Float / Complex
+          return numeral(fToC(a).pow(b));
+        },
+      );
+    },
+    (a) => {
+      return y.dispatch(
+        (b) => {
+          // Complex / Ratio
+          return numeral(a.pow(rToC(b)));
+        },
+        (b) => {
+          // Complex / Float
+          return numeral(a.pow(fToC(b)));
+        },
+        (b) => {
+          // Complex / Complex
+          return numeral(a.pow(b));
+        },
+      );
+    },
+  );
 }
