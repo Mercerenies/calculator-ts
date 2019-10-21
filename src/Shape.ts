@@ -30,10 +30,10 @@ namespace Shape {
           case "vector":
             return Shape.Unknown; // TODO Calculate dimensions of vector
           case "+":
-            return Shape.Unknown; // TODO
+            return t.map(Shape.of).reduce(shapeSum, Shape.Scalar);
           case "*":
           case "/":
-            return Shape.Unknown; // TODO
+            return t.map(Shape.of).reduce(shapeMul, Shape.Scalar);
           case "^":
             if (t.length == 0) // Empty exponent... what?
               return Shape.Unknown;
@@ -68,3 +68,37 @@ namespace Shape {
 }
 
 export default Shape;
+
+function shapeSum(a: Shape, b: Shape): Shape {
+  if (a == Shape.Unknown || b == Shape.Unknown)
+    return Shape.Unknown;
+  if (a == Shape.Scalar)
+    return b;
+  if (b == Shape.Scalar)
+    return a;
+  if (a == Shape.Variable)
+    return b;
+  if (b == Shape.Variable)
+    return a;
+  if (a == b)
+    return a;
+  return Shape.Unknown;
+}
+
+function shapeMul(a: Shape, b: Shape): Shape {
+  if (a == Shape.Unknown || b == Shape.Unknown)
+    return Shape.Unknown;
+  if (a == Shape.Scalar)
+    return b;
+  if (b == Shape.Scalar)
+    return a;
+  if (a == Shape.Variable)
+    return b;
+  if (b == Shape.Variable)
+    return a;
+  if (a == Shape.Vector && b == Shape.Vector)
+    return Shape.Scalar;
+  if (a == Shape.Matrix && b == Shape.Matrix)
+    return Shape.Matrix;
+  return Shape.Vector;
+}
