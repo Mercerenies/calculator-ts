@@ -33,6 +33,7 @@ const samplePass = compose([
   Factoring.collectLikeTerms, Normalize.flattenNestedExponents,
   Fold.foldConstants, Fold.foldConstantsPow, Fold.evalConstants,
   Normalize.flattenStdSingletons, Normalize.flattenStdNullaryOps,
+  Normalize.sortTermsAdditive, Normalize.sortTermsMultiplicative,
 ]);
 
 rl.on('line', (line) => {

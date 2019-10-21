@@ -3,6 +3,7 @@ import Expr from '../Expr'
 import Shape from '../Shape'
 import { Mode } from '../Mode'
 import * as Compound from '../Compound'
+import { sortToNum } from '../Util'
 
 export function normalizeNegatives(expr: Expr): Expr {
   // a - b ==> a + (-1) * b
@@ -124,4 +125,32 @@ export function flattenNullaryOps(expr: Expr, ops: Map<string, Expr>): Expr {
 
 export function flattenStdNullaryOps(expr: Expr): Expr {
   return flattenNullaryOps(expr, new Map([["+", Expr.from(0)], ["*", Expr.from(1)]]));
+}
+
+export function sortTermsAdditive(expr: Expr): Expr {
+  expr.ifCompoundHead("+", function(tail) {
+    const newtail = tail.slice();
+    newtail.sort((a, b) => sortToNum(a.lexCmp(b)));
+    expr = new Expr("+", newtail);
+  });
+  return expr;
+}
+
+export function sortTermsMultiplicative(expr: Expr): Expr {
+  expr.ifCompoundHead("*", function(tail) {
+
+    if (tail.filter((t) => !Shape.multiplicationCommutes(Shape.of(t))).length > 1)
+      // We can safely commute multiplication if there is at most one
+      // operand for which the commutativity fails. If there are two
+      // or more, leave it be. We allow there t obe one so that e.g.,
+      // scalars will commute around a single matrix to create a nicer
+      // standard form.
+      return;
+
+    const newtail = tail.slice();
+    newtail.sort((a, b) => sortToNum(a.lexCmp(b)));
+    expr = new Expr("*", newtail);
+
+  });
+  return expr;
 }

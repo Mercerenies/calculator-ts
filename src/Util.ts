@@ -19,3 +19,16 @@ export function cmp(a: number | bigint | string, b: number | bigint | string): "
   else
     return "eq";
 }
+
+export function sortToNum(a: "lt" | "gt" | "eq"): number {
+  switch (a) {
+    case "lt":
+      return -1;
+    case "gt":
+      return 1;
+    case "eq":
+      return 0;
+    default:
+      return never(a);
+  }
+}
