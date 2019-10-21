@@ -74,15 +74,15 @@ export default class Numeral implements NumberLike<Numeral> {
   }
 
   isRational(): boolean {
-    return level === Level.Rational;
+    return this.level === Level.Rational;
   }
 
   isFloating(): boolean {
-    return level === Level.Floating;
+    return this.level === Level.Floating;
   }
 
   isComplex(): boolean {
-    return level === Level.Complex;
+    return this.level === Level.Complex;
   }
 
   static zero(): Numeral {
