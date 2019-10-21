@@ -97,3 +97,31 @@ export function flattenNestedExponents(expr: Expr): Expr {
   });
   return expr;
 }
+
+export function flattenSingletons(expr: Expr, ops: string[]): Expr {
+  // +(x) ==> x
+  expr.ifCompoundN(1, function(head, [b]) {
+    if (ops.includes(head))
+      expr = b;
+  });
+  return expr;
+}
+
+export function flattenStdSingletons(expr: Expr): Expr {
+  return flattenSingletons(expr, ["+", "*"]);
+}
+
+export function flattenNullaryOps(expr: Expr, ops: Map<string, Expr>): Expr {
+  // +() ==> 0
+  // *() ==> 1
+  expr.ifCompoundN(0, function(head, []) {
+    const e = ops.get(head);
+    if (e !== undefined)
+      expr = e;
+  });
+  return expr;
+}
+
+export function flattenStdNullaryOps(expr: Expr): Expr {
+  return flattenNullaryOps(expr, new Map([["+", Expr.from(0)], ["*", Expr.from(1)]]));
+}

@@ -4,6 +4,7 @@ import Shape from '../Shape'
 import { Mode, ExactnessMode } from '../Mode'
 import * as Compound from '../Compound'
 import Numeral from '../Numerical/Numeral'
+import { getConst } from '../Constants'
 
 export function foldConstants(expr: Expr): Expr {
   // Handles +, *, /
@@ -89,6 +90,22 @@ export function foldConstantsPow(expr: Expr, mode: Mode): Expr {
           expr = Expr.from(result);
         });
       });
+    }
+  });
+
+  return expr;
+}
+
+// TODO evalFunctions
+
+export function evalConstants(expr: Expr, mode: Mode): Expr {
+
+  expr.ifVar(function(v) {
+    const props = getConst(v);
+    if (props !== undefined) {
+      if ((mode.exactness < ExactnessMode.Symbolic) || (props.isExact)) {
+        expr = Expr.from(props.value);
+      }
     }
   });
 
