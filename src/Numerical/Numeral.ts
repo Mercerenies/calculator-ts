@@ -3,6 +3,7 @@ import Ratio from './Ratio'
 import Floating from './Floating'
 import Complex from './Complex'
 import NumberLike from './NumberLike'
+import { cmp, never } from '../Util'
 
 export default class Numeral implements NumberLike<Numeral> {
 
@@ -83,6 +84,38 @@ export default class Numeral implements NumberLike<Numeral> {
 
   eq(that: Numeral) {
     return binaryPromoteU(this, that, (a, b) => a.eq(b));
+  }
+
+  lexCmp(that: Numeral): "eq" | "gt" | "lt" {
+    // This ordering is not "natural" in any way. It's arbitrary but
+    // consistent. It also doesn't agree with the above notion of
+    // equality (which promotes, whereas this does not).
+    if (this.level < that.level) {
+      return "lt";
+    } else if (this.level > that.level) {
+      return "gt";
+    } else {
+      switch (this.level) {
+        case Level.Rational:
+          if (this.r.num < that.r.num)
+            return "lt";
+          else if (this.r.num > that.r.num)
+            return "gt";
+          else
+            return cmp(this.r.den, that.r.den);
+        case Level.Floating:
+          return cmp(this.f.value, that.f.value);
+        case Level.Complex:
+          if (this.c.real < that.c.real)
+            return "lt";
+          else if (this.c.real > that.c.real)
+            return "gt";
+          else
+            return cmp(this.c.imag, that.c.imag);
+        default:
+          return never(this.level);
+      }
+    }
   }
 
   toString(): string {

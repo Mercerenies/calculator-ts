@@ -3,7 +3,7 @@ import Ratio from './Numerical/Ratio'
 import Floating from './Numerical/Floating'
 import Complex from './Numerical/Complex'
 import Numeral from './Numerical/Numeral'
-import { noop, never } from './Util'
+import { noop, never, cmp } from './Util'
 
 export default class Expr {
 
@@ -129,6 +129,36 @@ export default class Expr {
           (this.args.length == that.args.length) &&
           (this.args.every((a, idx) => a.eq(that.args[idx])))
         );
+    }
+  }
+
+  lexCmp(that: Expr): "lt" | "gt" | "eq" {
+    if (this.nature < that.nature) {
+      return "lt";
+    } else if (this.nature > that.nature) {
+      return "gt";
+    } else {
+      switch (this.nature) {
+        case "number":
+          return this.value.lexCmp(that.value);
+        case "variable":
+          return cmp(this.head, that.head);
+        case "compound":
+          if (this.head < that.head) {
+            return "lt";
+          } else if (this.head > that.head) {
+            return "gt";
+          } else {
+            for (let i = 0; i < Math.min(this.args.length, that.args.length); i++) {
+              const cmp = this.args[i].lexCmp(that.args[i]);
+              if (cmp != "eq")
+                return cmp;
+            }
+            return cmp(this.args.length, that.args.length);
+          }
+        default:
+          return never(this.nature);
+      }
     }
   }
 
