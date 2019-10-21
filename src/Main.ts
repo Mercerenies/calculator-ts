@@ -31,7 +31,7 @@ const samplePass = compose([
   Normalize.normalizeNegatives, Normalize.levelStdOperators,
   Normalize.simplifyRationals, Factoring.collectLikeFactors,
   Factoring.collectLikeTerms, Normalize.flattenNestedExponents,
-  Fold.foldConstants,
+  Fold.foldConstants, Fold.foldConstantsPow,
 ]);
 
 rl.on('line', (line) => {

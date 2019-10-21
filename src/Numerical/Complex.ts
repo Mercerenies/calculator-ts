@@ -50,7 +50,7 @@ export default class Complex implements NumberLike<Complex> {
   exp(): Complex {
     const c = Math.exp(this.real);
     const re = Math.cos(this.imag);
-    const im = Math.sin(this.real);
+    const im = Math.sin(this.imag);
     return new Complex(re * c, im * c);
   }
 

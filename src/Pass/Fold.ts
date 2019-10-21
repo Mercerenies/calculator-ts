@@ -1,7 +1,7 @@
 
 import Expr from '../Expr'
 import Shape from '../Shape'
-import { Mode } from '../Mode'
+import { Mode, ExactnessMode } from '../Mode'
 import * as Compound from '../Compound'
 import Numeral from '../Numerical/Numeral'
 
@@ -81,7 +81,12 @@ export function foldConstantsPow(expr: Expr, mode: Mode): Expr {
       // a^b (if both are numbers)
       a.ifNumber(function(a1) {
         b.ifNumber(function(b1) {
-          ///// (Also, test this whole function)
+          const result = a1.pow(b1);
+          // Special exception if we're in symbolic mode
+          if (a1.isRational() && b1.isRational() &&
+              !result.isRational() && mode.exactness >= ExactnessMode.Symbolic)
+            return;
+          expr = Expr.from(result);
         });
       });
     }
