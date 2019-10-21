@@ -1,9 +1,9 @@
 
 import Expr from '../Expr'
 import Shape from '../Shape'
-import { Mode } from '../Mode'
+import { Mode, ExactnessMode } from '../Mode'
 import * as Compound from '../Compound'
-import { sortToNum } from '../Util'
+import { sortToNum, noop } from '../Util'
 
 export function normalizeNegatives(expr: Expr): Expr {
   // a - b ==> a + (-1) * b
@@ -152,5 +152,20 @@ export function sortTermsMultiplicative(expr: Expr): Expr {
     expr = new Expr("*", newtail);
 
   });
+  return expr;
+}
+
+export function promoteRatios(expr: Expr, mode: Mode): Expr {
+  if (mode.exactness <= ExactnessMode.Floating) {
+    expr.ifNumber(function(x) {
+      x.dispatch(
+        function(r) {
+          expr = Expr.from(r.toFloating());
+        },
+        noop,
+        noop,
+      );
+    });
+  }
   return expr;
 }
