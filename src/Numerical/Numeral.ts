@@ -3,7 +3,7 @@ import Ratio from './Ratio'
 import Floating from './Floating'
 import Complex from './Complex'
 import NumberLike from './NumberLike'
-import { cmp, never } from '../Util'
+import { cmp, never, noop } from '../Util'
 
 export default class Numeral implements NumberLike<Numeral> {
 
@@ -40,6 +40,21 @@ export default class Numeral implements NumberLike<Numeral> {
       case Level.Complex:
         return c(this.c);
     }
+  }
+
+  ifRatio(f: (a: Ratio) => void, g: () => void = noop): Numeral {
+    this.dispatch(f, g, g);
+    return this;
+  }
+
+  ifFloating(f: (a: Floating) => void, g: () => void = noop): Numeral {
+    this.dispatch(g, f, g);
+    return this;
+  }
+
+  ifComplex(f: (a: Complex) => void, g: () => void = noop): Numeral {
+    this.dispatch(g, g, f);
+    return this;
   }
 
   add(that: Numeral): Numeral {
