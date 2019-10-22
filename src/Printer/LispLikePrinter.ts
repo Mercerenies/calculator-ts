@@ -1,5 +1,5 @@
 
-import { Printer } from '../Printer'
+import { Printer } from './Printer'
 import Expr from '../Expr'
 
 export default class LispLikePrinter implements Printer {

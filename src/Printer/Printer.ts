@@ -1,5 +1,5 @@
 
-import Expr from './Expr'
+import Expr from '../Expr'
 
 export interface Printer {
 

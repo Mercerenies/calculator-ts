@@ -1,6 +1,6 @@
 
 import Expr from './Expr'
-import { print, show } from './Printer'
+import { print, show } from './Printer/Printer'
 import LispLikePrinter from './Printer/LispLikePrinter'
 import PrettyPrinter from './Printer/PrettyPrinter'
 import Numeral from './Numerical/Numeral'

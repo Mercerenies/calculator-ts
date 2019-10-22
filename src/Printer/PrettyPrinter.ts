@@ -1,5 +1,5 @@
 
-import { Printer } from '../Printer'
+import { Printer } from './Printer'
 import Expr from '../Expr'
 import { StdOperatorTable, Fixity, Assoc } from '../Operator'
 
