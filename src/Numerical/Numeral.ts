@@ -59,6 +59,9 @@ export default class Numeral implements NumberLike<Numeral> {
   }
 
   recip(): Numeral {
+    // Special case for rational division by zero
+    if (this.level === Level.Rational && this.r.eq(Ratio.zero()))
+      return new Numeral(new Floating(0)).recip();
     return unaryDispatchU(this, (a) => numeral(a.recip()));
   }
 
