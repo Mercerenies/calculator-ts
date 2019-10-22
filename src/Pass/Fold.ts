@@ -62,7 +62,67 @@ export function foldConstants(expr: Expr): Expr {
   return expr;
 }
 
-// TODO foldConstantsRational
+function termsOf(expr: Expr): Expr[] {
+  let result: Expr[] = [expr];
+  expr.ifCompoundHead("*", function(tail) {
+    result = tail;
+  });
+  return result;
+}
+
+export function foldConstantsRational(expr: Expr): Expr {
+
+  expr.ifCompoundHeadN("/", 2, function([num, den]) {
+
+    const numt = termsOf(num);
+    const dent = termsOf(den);
+
+    let numacc = Numeral.one();
+    let newnum = numt.filter(function(t) {
+      let keep = true;
+      t.ifNumber(function(n) {
+        numacc = numacc.mul(n);
+        keep = false;
+      });
+      return keep;
+    });
+    let denacc = Numeral.one();
+    let newden = dent.filter(function(t) {
+      let keep = true;
+      t.ifNumber(function(n) {
+        denacc = denacc.mul(n);
+        keep = false;
+      });
+      return keep;
+    });
+
+    const total = numacc.div(denacc);
+    if (total.eq(Numeral.zero())) {
+      // Anything times zero is zero
+      expr = Expr.from(0);
+    } else if (total.eq(Numeral.one())) {
+      // If the resulting constant is one, omit it
+      expr = new Expr("/", [Compound.mul(newnum), Compound.mul(newden)]);
+    } else {
+      let handled = false;
+      total.ifRatio(function(r) {
+        if (r.num == BigInt(1)) {
+          // If it has a numerator of one, it makes sense to move the
+          // whole thing to the denominator.
+          expr = new Expr("/", [Compound.mul(newnum),
+                                Compound.mul(newden, Expr.from(total.recip()))]);
+          handled = true;
+        }
+      });
+      if (!handled)
+        expr = new Expr("/", [Compound.mul(newnum, Expr.from(total)),
+                              Compound.mul(newden)]);
+    }
+
+  });
+
+  return expr;
+}
 
 export function foldConstantsPow(expr: Expr, mode: Mode): Expr {
 
