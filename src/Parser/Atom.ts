@@ -46,6 +46,9 @@ export function parseRatio(p: Parser): Ratio | ParseError {
     const den = parseInt(p);
     if ([num, colon, den].some((x) => x instanceof ParseError))
       return p.expecting(["rational literal"]);
+    if (den === BigInt(0)) {
+      return p.fail("Division by zero");
+    }
     return new Ratio(num as bigint, den as bigint);
   });
 }
