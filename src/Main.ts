@@ -30,6 +30,7 @@ const SAFETY = 1000;
 const samplePass = compose([
   Normalize.normalizeNegatives, Normalize.levelStdOperators,
   Normalize.simplifyRationals, Factoring.collectLikeFactors,
+  Factoring.collectFactorsFromDenom,
   Factoring.collectLikeTerms, Normalize.flattenNestedExponents,
   Fold.foldConstants, Fold.foldConstantsRational, Fold.foldConstantsPow, Fold.evalConstants,
   Normalize.flattenStdSingletons, Normalize.flattenStdNullaryOps,

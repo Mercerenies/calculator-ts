@@ -9,7 +9,7 @@ export interface FactorProps {
 
   coalesce(base: Expr, count: Expr[]): Expr;
 
-  finalize(body: Expr[]): Expr;
+  finalize(leftovers: Expr[], matches: Expr[]): Expr;
 
 }
 
@@ -38,7 +38,7 @@ export function factorPass(expr: Expr, props: FactorProps): Expr {
     }
 
     const matched1 = matched.map(([b, c]) => props.coalesce(b, c));
-    expr = props.finalize(leftover.concat(matched1));
+    expr = props.finalize(leftover, matched1);
   });
 
   return expr;
