@@ -62,20 +62,12 @@ export function foldConstants(expr: Expr): Expr {
   return expr;
 }
 
-function termsOf(expr: Expr): Expr[] {
-  let result: Expr[] = [expr];
-  expr.ifCompoundHead("*", function(tail) {
-    result = tail;
-  });
-  return result;
-}
-
 export function foldConstantsRational(expr: Expr): Expr {
 
   expr.ifCompoundHeadN("/", 2, function([num, den]) {
 
-    const numt = termsOf(num);
-    const dent = termsOf(den);
+    const numt = Compound.termsOf("*", num);
+    const dent = Compound.termsOf("*", den);
 
     let numacc = Numeral.one();
     let newnum = numt.filter(function(t) {

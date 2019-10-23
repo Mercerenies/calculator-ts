@@ -29,3 +29,11 @@ export function mul(args: Expr[], base?: Expr): Expr {
   else
     return new Expr("*", args);
 }
+
+export function termsOf(head: string, expr: Expr): Expr[] {
+  let result: Expr[] = [expr];
+  expr.ifCompoundHead(head, function(tail) {
+    result = tail;
+  });
+  return result;
+}
