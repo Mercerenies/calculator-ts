@@ -152,6 +152,22 @@ export default class Numeral implements NumberLike<Numeral> {
     return this.level === Level.Complex;
   }
 
+  isPositive(): boolean {
+    return this.dispatch(
+      (r) => r.gt(Ratio.zero()),
+      (f) => f.gt(Floating.zero()),
+      (c) => false
+    );
+  }
+
+  isNegative(): boolean {
+    return this.dispatch(
+      (r) => r.lt(Ratio.zero()),
+      (f) => f.lt(Floating.zero()),
+      (c) => false
+    );
+  }
+
   static zero(): Numeral {
     return numeral(Ratio.zero());
   }
