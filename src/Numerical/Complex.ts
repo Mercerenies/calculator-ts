@@ -64,6 +64,10 @@ export default class Complex implements NumberLike<Complex> {
     return (that.mul(this.ln())).exp();
   }
 
+  get rectangular(): [number, number] {
+    return [this.real, this.imag];
+  }
+
   eq(that: Complex): boolean {
     return (
       (new Floating(this.real).eq(new Floating(that.real))) &&
