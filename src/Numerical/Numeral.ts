@@ -180,7 +180,7 @@ export default class Numeral implements NumberLike<Numeral> {
     return numeral(Floating.pi());
   }
 
-  static fromInt(a: bigint): Numeral {
+  static fromInt(a: bigint | number): Numeral {
     return numeral(Ratio.fromInt(a));
   }
 

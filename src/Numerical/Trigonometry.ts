@@ -83,7 +83,7 @@ export function asin(n: Numeral): Numeral {
     // asin(z) = -i ln(iz + sqrt(1 - z^2))
     const i = numeral(complex(0, 1));
     const lhs = n.mul(i);
-    const rhs = ( Numeral.one().sub(n.mul(n)) ).pow(numeral(ratio(BigInt(1), BigInt(2))))
+    const rhs = ( Numeral.one().sub(n.mul(n)) ).pow(numeral(ratio(1, 2)))
     const inner = lhs.add(rhs);
     return i.mul(inner.ln()).negate();
   });
@@ -91,7 +91,7 @@ export function asin(n: Numeral): Numeral {
 
 export function acos(n: Numeral): Numeral {
   // acos(z) = pi/2 - asin(z)
-  const pi2 = Numeral.pi().div(Numeral.fromInt(BigInt(2)));
+  const pi2 = Numeral.pi().div(Numeral.fromInt(2));
   return pi2.sub(asin(n));
 }
 
@@ -128,7 +128,7 @@ export function asinh(n: Numeral): Numeral {
     // asinh(z) = ln(z + sqrt(z^2 + 1))
     const i = numeral(complex(0, 1));
     const lhs = n;
-    const rhs = ( n.mul(n).add(Numeral.one()) ).pow(numeral(ratio(BigInt(1), BigInt(2))))
+    const rhs = ( n.mul(n).add(Numeral.one()) ).pow(numeral(ratio(1, 2)))
     const inner = lhs.add(rhs);
     return inner.ln();
   });
@@ -141,7 +141,7 @@ export function acosh(n: Numeral): Numeral {
     // asinh(z) = ln(z + sqrt(z^2 - 1))
     const i = numeral(complex(0, 1));
     const lhs = n;
-    const rhs = ( n.mul(n).sub(Numeral.one()) ).pow(numeral(ratio(BigInt(1), BigInt(2))))
+    const rhs = ( n.mul(n).sub(Numeral.one()) ).pow(numeral(ratio(1, 2)))
     const inner = lhs.add(rhs);
     return inner.ln();
   });
@@ -152,8 +152,8 @@ export function atanh(n: Numeral): Numeral {
     return numeral(floating(Math.atanh(value.value)));
   }, function() {
     // atanh(z) = (1/2) * ln( (1+x) / (1-x) )
-    const one = numeral(ratio(BigInt(1), BigInt(1)));
-    const half = numeral(ratio(BigInt(1), BigInt(2)));
+    const one = numeral(ratio(1, 1));
+    const half = numeral(ratio(1, 2));
     const num = one.add(n);
     const den = one.sub(n);
     const inner = num.div(den);

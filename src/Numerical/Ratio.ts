@@ -66,20 +66,26 @@ export default class Ratio implements NumberLike<Ratio> {
     return (this.sub(that).num > 0);
   }
 
-  static fromInt(a: bigint): Ratio {
+  static fromInt(a: bigint | number): Ratio {
+    if (typeof a === 'number')
+      a = BigInt(Math.floor(a));
     return new Ratio(a, BigInt(1));
   }
 
   static zero(): Ratio {
-    return Ratio.fromInt(BigInt(0));
+    return Ratio.fromInt(0);
   }
 
   static one(): Ratio {
-    return Ratio.fromInt(BigInt(1));
+    return Ratio.fromInt(1);
   }
 
 }
 
-export function ratio(a: bigint, b: bigint): Ratio {
+export function ratio(a: bigint | number, b: bigint | number): Ratio {
+  if (typeof a === 'number')
+    a = BigInt(Math.floor(a));
+  if (typeof b === 'number')
+    b = BigInt(Math.floor(b));
   return new Ratio(a, b);
 }
