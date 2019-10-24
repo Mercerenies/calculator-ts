@@ -8,10 +8,8 @@ import Ratio from './Numerical/Ratio'
 import Parser from './Parser/Parser'
 import { parseExprFromLine } from './Parser/Expr'
 import { ParseError } from './Parser/Error'
-import { Pass, compose, runPassTD } from './Pass/Pass'
-import * as Normalize from './Pass/Normalize'
-import * as Factoring from './Pass/Factoring'
-import * as Fold from './Pass/Fold'
+import { Pass, runPassTD } from './Pass/Pass'
+import { FullPass } from './Pass/Compiled'
 import { Mode, DefaultMode } from './Mode'
 
 import * as readline from 'readline'
@@ -27,18 +25,6 @@ const mode = DefaultMode;
 
 const SAFETY = 1000;
 
-const samplePass = compose([
-  Normalize.normalizeNegatives, Normalize.simplifyRationals,
-  Normalize.levelStdOperators, Factoring.collectLikeFactors,
-  Factoring.collectFactorsFromDenom,
-  Factoring.collectLikeTerms, Normalize.flattenNestedExponents,
-  Fold.foldConstants, Fold.foldConstantsRational, Fold.foldConstantsPow, Fold.evalConstants,
-  Fold.evalFunctions,
-  Normalize.flattenStdSingletons, Normalize.flattenStdNullaryOps,
-  Normalize.sortTermsAdditive, Normalize.sortTermsMultiplicative,
-  Normalize.promoteRatios,
-]);
-
 rl.on('line', (line) => {
   const expr = parseExprFromLine(line);
   if (expr instanceof ParseError) {
@@ -46,7 +32,7 @@ rl.on('line', (line) => {
   } else {
     print(llp, expr);
     print(pp, expr);
-    const expr1 = runPassTD(samplePass, expr, mode, SAFETY);
+    const expr1 = runPassTD(FullPass, expr, mode, SAFETY);
     print(llp, expr1);
     print(pp, expr1);
   }
