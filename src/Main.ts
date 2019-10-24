@@ -11,6 +11,8 @@ import { ParseError } from './Parser/Error'
 import { Pass, runPassTD } from './Pass/Pass'
 import { FullPass } from './Pass/Compiled'
 import { Mode, DefaultMode } from './Mode'
+import { showHelp, parseArgs } from './CommandLine'
+import { never } from './Util'
 
 import * as readline from 'readline'
 
@@ -21,7 +23,14 @@ const rl = readline.createInterface({
 
 const llp = new LispLikePrinter();
 const pp = new PrettyPrinter();
-const mode = DefaultMode;
+
+const mode0 = parseArgs(process.argv.slice(2));
+
+if (mode0 === "help") {
+  showHelp();
+  process.exit(1);
+}
+const mode = mode0 as Mode;
 
 const SAFETY = 1000;
 

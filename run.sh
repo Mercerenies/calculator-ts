@@ -1,3 +1,3 @@
 #!/bin/sh
 
-node ./js/Main.js
+node ./js/Main.js $*
