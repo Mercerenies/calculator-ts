@@ -5,6 +5,8 @@ import * as Normalize from './Normalize'
 import * as Factoring from './Factoring'
 import * as Fold from './Fold'
 
+export const SAFETY = 1000;
+
 export const FullPass: Pass = compose([
   Normalize.normalizeNegatives, Normalize.simplifyRationals,
   Normalize.levelStdOperators, Factoring.collectLikeFactors,

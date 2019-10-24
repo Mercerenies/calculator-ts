@@ -9,7 +9,7 @@ import Parser from './Parser/Parser'
 import { parseExprFromLine } from './Parser/Expr'
 import { ParseError } from './Parser/Error'
 import { Pass, runPassTD } from './Pass/Pass'
-import { FullPass } from './Pass/Compiled'
+import { FullPass, SAFETY } from './Pass/Compiled'
 import { Mode, DefaultMode } from './Mode'
 import { showHelp, parseArgs } from './CommandLine'
 import { never } from './Util'
@@ -31,8 +31,6 @@ if (mode0 === "help") {
   process.exit(1);
 }
 const mode = mode0 as Mode;
-
-const SAFETY = 1000;
 
 rl.on('line', (line) => {
   const expr = parseExprFromLine(line);

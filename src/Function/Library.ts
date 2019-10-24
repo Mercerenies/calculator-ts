@@ -1,6 +1,7 @@
 
 import { Function } from './Function'
 import * as Trig from './Trigonometry'
+import * as Approx from './Approximate'
 
 function compileFns(iter: Iterable<Function>): Map<string, Function> {
   const m = new Map<string, Function>();
@@ -16,4 +17,5 @@ export const StandardLibrary: Map<string, Function> =
     Trig.sinh, Trig.cosh, Trig.tanh, Trig.csch, Trig.sech, Trig.coth,
     Trig.asin, Trig.acos, Trig.atan, Trig.acsc, Trig.asec, Trig.acot,
     Trig.asinh, Trig.acosh, Trig.atanh, Trig.acsch, Trig.asech, Trig.acoth,
+    Approx.approx,
   ]);
