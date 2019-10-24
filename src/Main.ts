@@ -28,14 +28,15 @@ const mode = DefaultMode;
 const SAFETY = 1000;
 
 const samplePass = compose([
-  Normalize.normalizeNegatives, Normalize.levelStdOperators,
-  Normalize.simplifyRationals, Factoring.collectLikeFactors,
+  Normalize.normalizeNegatives, Normalize.simplifyRationals,
+  Normalize.levelStdOperators, Factoring.collectLikeFactors,
   Factoring.collectFactorsFromDenom,
   Factoring.collectLikeTerms, Normalize.flattenNestedExponents,
   Fold.foldConstants, Fold.foldConstantsRational, Fold.foldConstantsPow, Fold.evalConstants,
+  Fold.evalFunctions,
   Normalize.flattenStdSingletons, Normalize.flattenStdNullaryOps,
   Normalize.sortTermsAdditive, Normalize.sortTermsMultiplicative,
-  Normalize.promoteRatios, Fold.evalFunctions,
+  Normalize.promoteRatios,
 ]);
 
 rl.on('line', (line) => {
