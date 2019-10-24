@@ -2,14 +2,13 @@
 import { Function } from './Function'
 import FunctionBuilder from './Builder'
 import * as Trig from '../Numerical/Trigonometry'
-
-// TODO Degree / radian conversions
+import { angleToRad, radToAngle } from '../Unit/Angle'
 
 export const sin: Function =
   FunctionBuilder.simpleUnary(
     "sin",
-    function(n) {
-      return Trig.sin(n);
+    function(n, mode) {
+      return Trig.sin(angleToRad(n, mode.angular));
     }
   )
   .alwaysInexact()
@@ -18,8 +17,8 @@ export const sin: Function =
 export const cos: Function =
   FunctionBuilder.simpleUnary(
     "cos",
-    function(n) {
-      return Trig.cos(n);
+    function(n, mode) {
+      return Trig.cos(angleToRad(n, mode.angular));
     }
   )
   .alwaysInexact()
@@ -28,8 +27,8 @@ export const cos: Function =
 export const tan: Function =
   FunctionBuilder.simpleUnary(
     "tan",
-    function(n) {
-      return Trig.tan(n);
+    function(n, mode) {
+      return Trig.tan(angleToRad(n, mode.angular));
     }
   )
   .alwaysInexact()
@@ -38,8 +37,8 @@ export const tan: Function =
 export const csc: Function =
   FunctionBuilder.simpleUnary(
     "csc",
-    function(n) {
-      return Trig.csc(n);
+    function(n, mode) {
+      return Trig.csc(angleToRad(n, mode.angular));
     }
   )
   .alwaysInexact()
@@ -48,8 +47,8 @@ export const csc: Function =
 export const sec: Function =
   FunctionBuilder.simpleUnary(
     "sec",
-    function(n) {
-      return Trig.sec(n);
+    function(n, mode) {
+      return Trig.sec(angleToRad(n, mode.angular));
     }
   )
   .alwaysInexact()
@@ -58,8 +57,8 @@ export const sec: Function =
 export const cot: Function =
   FunctionBuilder.simpleUnary(
     "cot",
-    function(n) {
-      return Trig.cot(n);
+    function(n, mode) {
+      return Trig.cot(angleToRad(n, mode.angular));
     }
   )
   .alwaysInexact()
@@ -68,8 +67,8 @@ export const cot: Function =
 export const sinh: Function =
   FunctionBuilder.simpleUnary(
     "sinh",
-    function(n) {
-      return Trig.sinh(n);
+    function(n, mode) {
+      return Trig.sinh(angleToRad(n, mode.angular));
     }
   )
   .alwaysInexact()
@@ -78,8 +77,8 @@ export const sinh: Function =
 export const cosh: Function =
   FunctionBuilder.simpleUnary(
     "cosh",
-    function(n) {
-      return Trig.cosh(n);
+    function(n, mode) {
+      return Trig.cosh(angleToRad(n, mode.angular));
     }
   )
   .alwaysInexact()
@@ -88,8 +87,8 @@ export const cosh: Function =
 export const tanh: Function =
   FunctionBuilder.simpleUnary(
     "tanh",
-    function(n) {
-      return Trig.tanh(n);
+    function(n, mode) {
+      return Trig.tanh(angleToRad(n, mode.angular));
     }
   )
   .alwaysInexact()
@@ -98,8 +97,8 @@ export const tanh: Function =
 export const csch: Function =
   FunctionBuilder.simpleUnary(
     "csch",
-    function(n) {
-      return Trig.csch(n);
+    function(n, mode) {
+      return Trig.csch(angleToRad(n, mode.angular));
     }
   )
   .alwaysInexact()
@@ -108,8 +107,8 @@ export const csch: Function =
 export const sech: Function =
   FunctionBuilder.simpleUnary(
     "sech",
-    function(n) {
-      return Trig.sech(n);
+    function(n, mode) {
+      return Trig.sech(angleToRad(n, mode.angular));
     }
   )
   .alwaysInexact()
@@ -118,8 +117,8 @@ export const sech: Function =
 export const coth: Function =
   FunctionBuilder.simpleUnary(
     "coth",
-    function(n) {
-      return Trig.coth(n);
+    function(n, mode) {
+      return Trig.coth(angleToRad(n, mode.angular));
     }
   )
   .alwaysInexact()
@@ -128,8 +127,8 @@ export const coth: Function =
 export const asin: Function =
   FunctionBuilder.simpleUnary(
     "asin",
-    function(n) {
-      return Trig.asin(n);
+    function(n, mode) {
+      return radToAngle(Trig.asin(n), mode.angular);
     }
   )
   .alwaysInexact()
@@ -138,8 +137,8 @@ export const asin: Function =
 export const acos: Function =
   FunctionBuilder.simpleUnary(
     "acos",
-    function(n) {
-      return Trig.acos(n);
+    function(n, mode) {
+      return radToAngle(Trig.acos(n), mode.angular);
     }
   )
   .alwaysInexact()
@@ -148,8 +147,8 @@ export const acos: Function =
 export const atan: Function =
   FunctionBuilder.simpleUnary(
     "atan",
-    function(n) {
-      return Trig.atan(n);
+    function(n, mode) {
+      return radToAngle(Trig.atan(n), mode.angular);
     }
   )
   .alwaysInexact()
@@ -158,8 +157,8 @@ export const atan: Function =
 export const acsc: Function =
   FunctionBuilder.simpleUnary(
     "acsc",
-    function(n) {
-      return Trig.acsc(n);
+    function(n, mode) {
+      return radToAngle(Trig.acsc(n), mode.angular);
     }
   )
   .alwaysInexact()
@@ -168,8 +167,8 @@ export const acsc: Function =
 export const asec: Function =
   FunctionBuilder.simpleUnary(
     "asec",
-    function(n) {
-      return Trig.asec(n);
+    function(n, mode) {
+      return radToAngle(Trig.asec(n), mode.angular);
     }
   )
   .alwaysInexact()
@@ -178,8 +177,8 @@ export const asec: Function =
 export const acot: Function =
   FunctionBuilder.simpleUnary(
     "acot",
-    function(n) {
-      return Trig.acot(n);
+    function(n, mode) {
+      return radToAngle(Trig.acot(n), mode.angular);
     }
   )
   .alwaysInexact()
@@ -188,8 +187,8 @@ export const acot: Function =
 export const asinh: Function =
   FunctionBuilder.simpleUnary(
     "asinh",
-    function(n) {
-      return Trig.asinh(n);
+    function(n, mode) {
+      return radToAngle(Trig.asinh(n), mode.angular);
     }
   )
   .alwaysInexact()
@@ -198,8 +197,8 @@ export const asinh: Function =
 export const acosh: Function =
   FunctionBuilder.simpleUnary(
     "acosh",
-    function(n) {
-      return Trig.acosh(n);
+    function(n, mode) {
+      return radToAngle(Trig.acosh(n), mode.angular);
     }
   )
   .alwaysInexact()
@@ -208,8 +207,8 @@ export const acosh: Function =
 export const atanh: Function =
   FunctionBuilder.simpleUnary(
     "atanh",
-    function(n) {
-      return Trig.atanh(n);
+    function(n, mode) {
+      return radToAngle(Trig.atanh(n), mode.angular);
     }
   )
   .alwaysInexact()
@@ -218,8 +217,8 @@ export const atanh: Function =
 export const acsch: Function =
   FunctionBuilder.simpleUnary(
     "acsch",
-    function(n) {
-      return Trig.acsch(n);
+    function(n, mode) {
+      return radToAngle(Trig.acsch(n), mode.angular);
     }
   )
   .alwaysInexact()
@@ -228,8 +227,8 @@ export const acsch: Function =
 export const asech: Function =
   FunctionBuilder.simpleUnary(
     "asech",
-    function(n) {
-      return Trig.asech(n);
+    function(n, mode) {
+      return radToAngle(Trig.asech(n), mode.angular);
     }
   )
   .alwaysInexact()
@@ -238,8 +237,8 @@ export const asech: Function =
 export const acoth: Function =
   FunctionBuilder.simpleUnary(
     "acoth",
-    function(n) {
-      return Trig.acoth(n);
+    function(n, mode) {
+      return radToAngle(Trig.acoth(n), mode.angular);
     }
   )
   .alwaysInexact()
