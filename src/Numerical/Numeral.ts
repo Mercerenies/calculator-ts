@@ -176,6 +176,14 @@ export default class Numeral implements NumberLike<Numeral> {
     return numeral(Ratio.one());
   }
 
+  static pi(): Numeral {
+    return numeral(Floating.pi());
+  }
+
+  static fromInt(a: bigint): Numeral {
+    return numeral(Ratio.fromInt(a));
+  }
+
 }
 
 export enum Level {

@@ -67,6 +67,10 @@ export default class Floating implements NumberLike<Floating> {
     return new Floating(0);
   }
 
+  static pi(): Floating {
+    return new Floating(Math.PI);
+  }
+
 }
 
 export function floating(a: number): Floating {
