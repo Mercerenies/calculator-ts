@@ -14,10 +14,10 @@ export interface Function {
 
 }
 
-export function apply(map: Map<String, Function>,
-                      head: string,
-                      tail: Expr[],
-                      mode: Mode): Expr {
+export function tryApply(map: Map<String, Function>,
+                         head: string,
+                         tail: Expr[],
+                         mode: Mode): Expr {
   const fn = map.get(head);
   if (fn === undefined)
     return new Expr(head, tail);

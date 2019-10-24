@@ -5,6 +5,8 @@ import { Mode, ExactnessMode } from '../Mode'
 import * as Compound from '../Compound'
 import Numeral from '../Numerical/Numeral'
 import { getConst } from '../Constants'
+import { StandardLibrary } from '../Function/Library'
+import { tryApply } from '../Function/Function'
 
 export function foldConstants(expr: Expr): Expr {
   // Handles +, *, /
@@ -148,7 +150,14 @@ export function foldConstantsPow(expr: Expr, mode: Mode): Expr {
   return expr;
 }
 
-// TODO evalFunctions
+export function evalFunctions(expr: Expr, mode: Mode): Expr {
+
+  expr.ifCompound(function(head, tail) {
+    expr = tryApply(StandardLibrary, head, tail, mode);
+  });
+
+  return expr;
+}
 
 export function evalConstants(expr: Expr, mode: Mode): Expr {
 
