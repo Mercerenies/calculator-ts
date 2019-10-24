@@ -48,7 +48,7 @@ function runPass(pass: Pass, expr: Expr, mode: Mode,
                  max: number = Infinity): Expr {
   for (let i = 0; i < max; i++) {
     const expr1 = iter(pass, expr, mode);
-    if (expr1.eq(expr))
+    if (expr1.lexCmp(expr) === "eq")
       return expr;
     expr = expr1;
   }
