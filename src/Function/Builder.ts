@@ -49,7 +49,8 @@ export default class FunctionBuilder implements Function {
     return new FunctionBuilder(Object.assign({}, this, { eval: ev }));
   }
 
-  static simpleUnary(name: string, f: (n: Numeral) => Numeral | null): FunctionBuilder {
+  static simpleUnary(name: string,
+                     f: (n: Numeral, mode: Mode) => Numeral | null): FunctionBuilder {
     return new FunctionBuilder({
       name: name,
       eval(args: Expr[], mode: Mode): Expr | null {
@@ -57,7 +58,7 @@ export default class FunctionBuilder implements Function {
           return null;
         let result: Numeral | null = null;
         args[0].ifNumber(function(n) {
-          result = f(n);
+          result = f(n, mode);
         });
         if (result === null)
           return null;
@@ -66,7 +67,8 @@ export default class FunctionBuilder implements Function {
     });
   }
 
-  static simpleBinary(name: string, f: (a: Numeral, b: Numeral) => Numeral | null): FunctionBuilder {
+  static simpleBinary(name: string,
+                      f: (a: Numeral, b: Numeral, mode: Mode) => Numeral | null): FunctionBuilder {
     return new FunctionBuilder({
       name: name,
       eval(args: Expr[], mode: Mode): Expr | null {
@@ -75,7 +77,7 @@ export default class FunctionBuilder implements Function {
         let result: Numeral | null = null;
         args[0].ifNumber(function(a) {
           args[1].ifNumber(function(b) {
-            result = f(a, b);
+            result = f(a, b, mode);
           });
         });
         if (result === null)

@@ -3,6 +3,8 @@ import { Function } from './Function'
 import FunctionBuilder from './Builder'
 import * as Trig from '../Numerical/Trigonometry'
 
+// TODO Degree / radian conversions
+
 export const sin: Function =
   FunctionBuilder.simpleUnary(
     "sin",
