@@ -2,6 +2,7 @@
 import Expr from '../Expr'
 import { Function } from '../Function/Function'
 import { StandardLibrary } from '../Function/Library'
+import { Mode } from '../Mode'
 import * as Compound from '../Compound'
 
 export const DerivativeFunctionName = "D";
@@ -10,7 +11,11 @@ function unknownDeriv(expr: Expr, variable: string): Expr {
   return new Expr(DerivativeFunctionName, [expr, Expr.from(variable)]);
 }
 
-export function derivative(expr: Expr, variable: string): Expr {
+export function derivative(expr: Expr,
+                           variable: string,
+                           mode: Mode,
+                           library: Map<string, Function> = StandardLibrary): Expr {
+  const recurse = (e: Expr) => derivative(e, variable, mode, library);
   return expr.dispatch(
     () => Expr.from(0), // Derivative of a constant is zero
     (v) => Expr.from(v == variable ? 1 : 0), // Derivative of a variable is either zero or one
@@ -18,11 +23,11 @@ export function derivative(expr: Expr, variable: string): Expr {
       switch (head) {
         case "+":
 
-          return new Expr("+", tail.map((t) => derivative(t, variable)));
+          return new Expr("+", tail.map(recurse));
 
         case "-":
 
-          return new Expr("-", tail.map((t) => derivative(t, variable)));
+          return new Expr("-", tail.map(recurse));
 
         case "*": {
           // Product Rule: (f g)' = f g' + f' g
@@ -31,7 +36,7 @@ export function derivative(expr: Expr, variable: string): Expr {
           const summands: Expr[] = [];
           for (let i = 0; i < tail.length; i++) {
             const dup = tail.slice();
-            dup[i] = derivative(dup[i], variable);
+            dup[i] = recurse(dup[i]);
             summands.push(Compound.mul(dup));
           }
           return Compound.add(summands);
@@ -47,8 +52,8 @@ export function derivative(expr: Expr, variable: string): Expr {
           }
 
           const [num, den] = tail;
-          const numd = derivative(num, variable);
-          const dend = derivative(den, variable);
+          const numd = recurse(num);
+          const dend = recurse(den);
 
           return new Expr("/", [
             new Expr("-", [new Expr("*", [den, numd]), new Expr("*", [num, dend])]),
@@ -67,8 +72,8 @@ export function derivative(expr: Expr, variable: string): Expr {
           }
 
           const [base, exp] = tail;
-          const based = derivative(base, variable);
-          const expd = derivative(exp, variable);
+          const based = recurse(base);
+          const expd = recurse(exp);
 
           return new Expr("*", [
             new Expr("^", [base, exp]),
@@ -86,9 +91,28 @@ export function derivative(expr: Expr, variable: string): Expr {
 
         }
 
-        default:
-          // Unknown derivative.
+        default: {
+
+          const fn = library.get(head);
+          if (fn !== undefined) {
+            // Extended chain rule
+            const summands: Expr[] = [];
+            let failed = false;
+            for (let i = 0; i < tail.length; i++) {
+              const curr = fn.derivative(i, tail, mode)
+              if (curr === null) {
+                failed = true;
+                break;
+              }
+              summands.push(Compound.mul([recurse(tail[i]), curr]));
+            }
+            if (!failed)
+              return Compound.add(summands);
+          }
+
+          // If none of the other cases apply, then unknown.
           return unknownDeriv(expr, variable);
+        }
       }
     },
   );

@@ -5,6 +5,7 @@ import Expr from '../Expr'
 import { numeral } from '../Numerical/Numeral'
 import { ratio } from '../Numerical/Ratio'
 import { ExactnessMode } from '../Mode'
+import Shape from '../Shape'
 
 export const log: Function =
   FunctionBuilder.simpleUnary(
@@ -13,6 +14,8 @@ export const log: Function =
       return n.ln();
     }
   )
+  .withUnaryDeriv((x) => new Expr("/", [Expr.from(1), x]))
+  .withShape(() => Shape.Scalar)
   .alwaysInexact()
   .freeze();
 
@@ -23,6 +26,8 @@ export const exp: Function =
       return n.exp();
     }
   )
+  .withUnaryDeriv((x) => new Expr("exp", [x])) // The easy derivative :)
+  .withShape(() => Shape.Scalar)
   .alwaysInexact()
   .freeze();
 
@@ -56,6 +61,13 @@ export const sqrt: Function =
 
     }
   )
+  .withUnaryDeriv((x) => new Expr("/", [
+                           Expr.from(1),
+                           new Expr("*", [Expr.from(2), new Expr("sqrt", [x])])
+                         ]))
+  .withShape(() => Shape.Scalar) // There may be some point in the
+                                 // future when we calculate sqrt of a
+                                 // matrix, but that day is not today.
   .freeze();
 
 function isPerfectSquare(n: bigint): boolean {

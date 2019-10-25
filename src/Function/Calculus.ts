@@ -7,12 +7,12 @@ import { derivative as cderivative, DerivativeFunctionName } from '../Calculus/D
 export const derivative: Function =
   new FunctionBuilder({
     name: DerivativeFunctionName,
-    eval(args: Expr[]) {
+    eval(args, mode) {
       if (args.length !== 2)
         return null;
       let result = null;
       args[1].ifVar(function(v) {
-        result = cderivative(args[0], v);
+        result = cderivative(args[0], v, mode);
       });
       return result;
     }
