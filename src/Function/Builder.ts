@@ -22,7 +22,7 @@ export default class FunctionBuilder implements Function {
     return new FunctionBuilder(Object.assign({}, this, { derivative: deriv }));
   }
 
-  withShape(shape: (args: Expr[], mode: Mode) => Expr | null): FunctionBuilder {
+  withShape(shape: (args: Expr[], mode: Mode) => Shape): FunctionBuilder {
     return new FunctionBuilder(Object.assign({}, this, { shape: shape }));
   }
 
