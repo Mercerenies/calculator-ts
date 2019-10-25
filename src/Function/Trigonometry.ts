@@ -2,8 +2,15 @@
 import { Function } from './Function'
 import FunctionBuilder, * as B from './Builder'
 import * as Trig from '../Numerical/Trigonometry'
-import { angleToRad, radToAngle } from '../Unit/Angle'
+import { angleToRad, radToAngle, angleToRadFactorSym, radToAngleFactorSym } from '../Unit/Angle'
 import Shape from '../Shape'
+import Expr from '../Expr'
+import { Mode } from '../Mode'
+
+///// Derivatives of all of these
+
+const ator = (m: Mode) => angleToRadFactorSym(m.angular);
+const rtoa = (m: Mode) => radToAngleFactorSym(m.angular);
 
 export const sin: Function =
   FunctionBuilder.simpleUnary(
@@ -14,6 +21,7 @@ export const sin: Function =
   )
   .alwaysInexact()
   .withShape(B.Always(() => Shape.Scalar))
+  .withDeriv(B.Unary((x, mode) => new Expr("*", [ator(mode), new Expr("cos", [x])])))
   .freeze();
 
 export const cos: Function =
@@ -25,6 +33,7 @@ export const cos: Function =
   )
   .alwaysInexact()
   .withShape(B.Always(() => Shape.Scalar))
+  .withDeriv(B.Unary((x, mode) => new Expr("*", [Expr.from(-1), ator(mode), new Expr("sin", [x])])))
   .freeze();
 
 export const tan: Function =
@@ -36,7 +45,9 @@ export const tan: Function =
   )
   .alwaysInexact()
   .withShape(B.Always(() => Shape.Scalar))
-  .freeze();
+  .withDeriv(B.Unary((x, mode) => new Expr("*", [ator(mode), new Expr("^", [new Expr("sec", [x]),
+                                                                            Expr.from(2)])])))
+  .freeze();6
 
 export const csc: Function =
   FunctionBuilder.simpleUnary(
