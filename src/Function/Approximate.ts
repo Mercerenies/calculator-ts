@@ -1,6 +1,6 @@
 
 import { Function } from './Function'
-import FunctionBuilder from './Builder'
+import FunctionBuilder, * as B from './Builder'
 import { Mode, ExactnessMode } from '../Mode'
 import { FullPass, SAFETY } from '../Pass/Compiled'
 import { runPassTD } from '../Pass/Pass'
@@ -19,4 +19,5 @@ export const approx: Function =
 
     }
   })
+  .withShape(B.MatchFirstArg)
   .freeze();

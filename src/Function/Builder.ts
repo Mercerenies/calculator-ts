@@ -109,3 +109,9 @@ export function Always(s: () => Shape): (args: Expr[], mode: Mode) => Shape {
   // forced me to do something, and this was the easiest fix. ¯\_(ツ)_/¯
   return s;
 }
+
+export function MatchFirstArg(args: Expr[], mode: Mode): Shape {
+  if (args.length === 0)
+    return Shape.Unknown;
+  return Shape.of(args[0], mode);
+}
