@@ -26,16 +26,6 @@ export default class FunctionBuilder implements Function {
     return new FunctionBuilder(Object.assign({}, this, { shape: shape }));
   }
 
-  withUnaryDeriv(deriv: (arg: Expr, mode: Mode) => Expr | null): FunctionBuilder {
-    return this.withDeriv(function(n, args, mode) {
-      if (n != 0)
-        return null;
-      if (args.length != 1)
-        return null;
-      return deriv(args[0], mode);
-    });
-  }
-
   freeze(): Function {
     return this;
   }
@@ -94,4 +84,25 @@ export interface PartialFunction {
   eval: (args: Expr[], mode: Mode) => Expr | null;
   derivative?: (arg: number, args: Expr[], mode: Mode) => Expr | null;
   shape?: (args: Expr[], mode: Mode) => Shape;
+}
+
+// I'm capitalizing these because I want to think of them as
+// "constructors" for derivative functions or shape functions. Yes,
+// they're really just curried functions, but I want to think of them
+// as constructors of calculator data.
+
+export function Unary(
+  deriv: (arg: Expr, mode: Mode) => Expr | null
+): (arg: number, args: Expr[], mode: Mode) => Expr | null {
+  return function(n, args, mode) {
+    if (n != 0)
+      return null;
+    if (args.length != 1)
+      return null;
+    return deriv(args[0], mode);
+  };
+}
+
+export function Always(s: Shape): (args: Expr[], mode: Mode) => Shape {
+  return () => s;
 }

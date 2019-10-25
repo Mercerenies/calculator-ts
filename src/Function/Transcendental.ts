@@ -1,6 +1,6 @@
 
 import { Function } from './Function'
-import FunctionBuilder from './Builder'
+import FunctionBuilder, * as B from './Builder'
 import Expr from '../Expr'
 import { numeral } from '../Numerical/Numeral'
 import { ratio } from '../Numerical/Ratio'
@@ -14,8 +14,8 @@ export const log: Function =
       return n.ln();
     }
   )
-  .withUnaryDeriv((x) => new Expr("/", [Expr.from(1), x]))
-  .withShape(() => Shape.Scalar)
+  .withDeriv(B.Unary((x) => new Expr("/", [Expr.from(1), x])))
+  .withShape(B.Always(Shape.Scalar))
   .alwaysInexact()
   .freeze();
 
@@ -26,8 +26,8 @@ export const exp: Function =
       return n.exp();
     }
   )
-  .withUnaryDeriv((x) => new Expr("exp", [x])) // The easy derivative :)
-  .withShape(() => Shape.Scalar)
+  .withDeriv(B.Unary((x) => new Expr("exp", [x]))) // The easy derivative :)
+  .withShape(B.Always(Shape.Scalar))
   .alwaysInexact()
   .freeze();
 
@@ -61,13 +61,13 @@ export const sqrt: Function =
 
     }
   )
-  .withUnaryDeriv((x) => new Expr("/", [
-                           Expr.from(1),
-                           new Expr("*", [Expr.from(2), new Expr("sqrt", [x])])
-                         ]))
-  .withShape(() => Shape.Scalar) // There may be some point in the
-                                 // future when we calculate sqrt of a
-                                 // matrix, but that day is not today.
+  .withDeriv(B.Unary((x) => new Expr("/", [
+                              Expr.from(1),
+                              new Expr("*", [Expr.from(2), new Expr("sqrt", [x])])
+                            ])))
+  .withShape(B.Always(Shape.Scalar)) // There may be some point in the
+                                     // future when we calculate sqrt of a
+                                     // matrix, but that day is not today.
   .freeze();
 
 function isPerfectSquare(n: bigint): boolean {

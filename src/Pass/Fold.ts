@@ -8,6 +8,8 @@ import { getConst } from '../Constants'
 import { StandardLibrary } from '../Function/Library'
 import { tryApply } from '../Function/Function'
 
+const lib = StandardLibrary;
+
 export function foldConstants(expr: Expr): Expr {
   // Handles +, *, /
 
@@ -125,7 +127,7 @@ export function foldConstantsPow(expr: Expr, mode: Mode): Expr {
       // 1^b ==> 1
       expr = Expr.from(1);
     } else if ((b.eq(Expr.from(0))) &&
-               ([Shape.Scalar, Shape.Variable].includes(Shape.of(a, mode)))) {
+               ([Shape.Scalar, Shape.Variable].includes(Shape.of(a, mode, lib)))) {
       // a^0 ==> 1 (if a is scalar or variable shaped)
       // TODO Make this return a generic matrix form if the arg is not scalar
       expr = Expr.from(1);

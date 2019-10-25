@@ -2,7 +2,6 @@
 import Expr from './Expr'
 import { Mode, DefaultMode, VectorMode } from './Mode'
 import { Function } from './Function/Function'
-import { StandardLibrary } from './Function/Library'
 
 enum Shape {
   Scalar, Vector, Matrix, Variable, Unknown,
@@ -24,8 +23,8 @@ namespace Shape {
   }
 
   export function of(expr: Expr,
-                     mode: Mode = DefaultMode,
-                     library: Map<string, Function> = StandardLibrary): Shape {
+                     mode: Mode,
+                     library: Map<string, Function>): Shape {
     const shape = expr.dispatch(
       () => Shape.Scalar,
       () => Shape.Variable,
@@ -41,7 +40,7 @@ namespace Shape {
           case "^":
             if (t.length == 0) // Empty exponent... what?
               return Shape.Unknown;
-            return Shape.of(t[0], mode);
+            return Shape.of(t[0], mode, library);
           default: {
             const fn = library.get(h);
             if (fn !== undefined) {
