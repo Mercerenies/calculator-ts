@@ -4,9 +4,6 @@ import Shape from '../Shape'
 import { Mode, ExactnessMode } from '../Mode'
 import * as Compound from '../Compound'
 import { sortToNum, noop } from '../Util'
-import { StandardLibrary } from '../Function/Library'
-
-const lib = StandardLibrary;
 
 export function normalizeNegatives(expr: Expr): Expr {
   // a - b ==> a + (-1) * b
@@ -69,7 +66,7 @@ export function simplifyRationals(expr: Expr, mode: Mode): Expr {
       // If there's no division, don't bother triggering it.
       return;
     }
-    if (!ts.every((e) => Shape.multiplicationCommutes(Shape.of(e, mode, lib)))) {
+    if (!ts.every((e) => Shape.multiplicationCommutes(Shape.of(e, mode)))) {
       // If multiplication isn't commutative, then it's a dangerous
       // operation.
       return;
@@ -142,7 +139,7 @@ export function sortTermsAdditive(expr: Expr): Expr {
 export function sortTermsMultiplicative(expr: Expr, mode: Mode): Expr {
   expr.ifCompoundHead("*", function(tail) {
 
-    if (tail.filter((t) => !Shape.multiplicationCommutes(Shape.of(t, mode, lib))).length > 1)
+    if (tail.filter((t) => !Shape.multiplicationCommutes(Shape.of(t, mode))).length > 1)
       // We can safely commute multiplication if there is at most one
       // operand for which the commutativity fails. If there are two
       // or more, leave it be. We allow there t obe one so that e.g.,

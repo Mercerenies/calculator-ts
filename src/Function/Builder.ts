@@ -103,6 +103,9 @@ export function Unary(
   };
 }
 
-export function Always(s: Shape): (args: Expr[], mode: Mode) => Shape {
-  return () => s;
+export function Always(s: () => Shape): (args: Expr[], mode: Mode) => Shape {
+  // Ideally, this function would take a Shape, not a () => Shape. But
+  // annoying circular dependency problems between a bunch of modules
+  // forced me to do something, and this was the easiest fix. ¯\_(ツ)_/¯
+  return s;
 }

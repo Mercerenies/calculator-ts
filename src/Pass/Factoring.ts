@@ -6,9 +6,6 @@ import { Mode } from '../Mode'
 import Shape from '../Shape'
 import { MapMerge, mergeOrd } from '../Merge'
 import { sortToNum } from '../Util'
-import { StandardLibrary } from '../Function/Library'
-
-const lib = StandardLibrary;
 
 export const MultiplicationFactor: FactorProps = {
   head: "*",
@@ -102,7 +99,7 @@ function shouldBeFlipped(expr: Expr[]): Expr | null {
 export function collectLikeFactors(expr: Expr, mode: Mode): Expr {
   let disabled = false;
   expr.ifCompoundHead("*", function(tail) {
-    if (!tail.every((e) => Shape.multiplicationCommutes(Shape.of(e, mode, lib))))
+    if (!tail.every((e) => Shape.multiplicationCommutes(Shape.of(e, mode))))
       disabled = true;
   });
   if (disabled)
@@ -128,7 +125,7 @@ export function collectFactorsFromDenom(expr: Expr, mode: Mode): Expr {
     const numt = Compound.termsOf("*", num);
     const dent = Compound.termsOf("*", den);
 
-    if (!(numt.concat(dent)).every((e) => Shape.multiplicationCommutes(Shape.of(e, mode, lib))))
+    if (!(numt.concat(dent)).every((e) => Shape.multiplicationCommutes(Shape.of(e, mode))))
       return; // Not commutative so ignore.
 
     const numleft: Expr[] = [];

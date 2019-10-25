@@ -2,6 +2,7 @@
 import Expr from './Expr'
 import { Mode, DefaultMode, VectorMode } from './Mode'
 import { Function } from './Function/Function'
+import { StandardLibrary } from './Function/Library'
 
 enum Shape {
   Scalar, Vector, Matrix, Variable, Unknown,
@@ -24,7 +25,7 @@ namespace Shape {
 
   export function of(expr: Expr,
                      mode: Mode,
-                     library: Map<string, Function>): Shape {
+                     library: Map<string, Function> = StandardLibrary): Shape {
     const shape = expr.dispatch(
       () => Shape.Scalar,
       () => Shape.Variable,
