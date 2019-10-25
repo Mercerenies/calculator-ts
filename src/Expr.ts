@@ -7,8 +7,8 @@ import { noop, never, cmp } from './Util'
 
 export default class Expr {
 
-  private nature: "number" | "variable" | "compound";
-  private value: Numeral
+  private nature: Nature;
+  private value: Numeral;
   private head: string;
   private args: Expr[];
 
@@ -16,17 +16,17 @@ export default class Expr {
   constructor(head: string, args: Expr[]);
   constructor(a: any, b?: any) {
     if (a instanceof Numeral) {
-      this.nature = "number";
+      this.nature = Nature.Number;
       this.value = a;
       this.head = "";
       this.args = [];
     } else if (b !== undefined) {
-      this.nature = "compound";
+      this.nature = Nature.Compound;
       this.value = Numeral.zero();
       this.head = a;
       this.args = b;
     } else {
-      this.nature = "variable";
+      this.nature = Nature.Variable;
       this.value = Numeral.zero();
       this.head = a;
       this.args = [];
@@ -35,25 +35,25 @@ export default class Expr {
 
   dispatch<T>(n: (a: Numeral) => T, v: (a: string) => T, c: (a: string, b: Expr[]) => T): T {
     switch (this.nature) {
-      case "number":
+      case Nature.Number:
         return n(this.value);
-      case "variable":
+      case Nature.Variable:
         return v(this.head);
-      case "compound":
+      case Nature.Compound:
         return c(this.head, this.args);
     }
   }
 
   isNumber(): boolean {
-    return this.nature == "number";
+    return this.nature == Nature.Number;
   }
 
   isVar(): boolean {
-    return this.nature == "variable";
+    return this.nature == Nature.Variable;
   }
 
   isCompound(): boolean {
-    return this.nature == "compound";
+    return this.nature == Nature.Compound;
   }
 
   ifNumber(f: (a: Numeral) => void, g: () => void = noop): Expr {
@@ -112,18 +112,18 @@ export default class Expr {
   }
 
   hasHead(s: string): boolean {
-    return (this.nature == "compound") && (this.head == s);
+    return (this.nature == Nature.Compound) && (this.head == s);
   }
 
   eq(that: Expr): boolean {
     if (this.nature != that.nature)
       return false;
     switch (this.nature) {
-      case "number":
+      case Nature.Number:
         return this.value.eq(that.value);
-      case "variable":
+      case Nature.Variable:
         return this.head == that.head;
-      case "compound":
+      case Nature.Compound:
         return (
           (this.head == that.head) &&
           (this.args.length == that.args.length) &&
@@ -139,11 +139,11 @@ export default class Expr {
       return "gt";
     } else {
       switch (this.nature) {
-        case "number":
+        case Nature.Number:
           return this.value.lexCmp(that.value);
-        case "variable":
+        case Nature.Variable:
           return cmp(this.head, that.head);
-        case "compound":
+        case Nature.Compound:
           if (this.head < that.head) {
             return "lt";
           } else if (this.head > that.head) {
@@ -181,4 +181,8 @@ export default class Expr {
     return never(n);
   }
 
+}
+
+enum Nature {
+  Number = 0, Variable = 1, Compound = 2,
 }
