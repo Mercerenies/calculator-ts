@@ -1,6 +1,8 @@
 
 import Expr from './Expr'
-import { VectorMode } from './Mode'
+import { Mode, DefaultMode, VectorMode } from './Mode'
+import { Function } from './Function/Function'
+import { StandardLibrary } from './Function/Library'
 
 enum Shape {
   Scalar, Vector, Matrix, Variable, Unknown,
@@ -21,7 +23,9 @@ namespace Shape {
     }
   }
 
-  export function of(expr: Expr, mode: VectorMode = VectorMode.AssumeNothing): Shape {
+  export function of(expr: Expr,
+                     mode: Mode = DefaultMode,
+                     library: Map<string, Function> = StandardLibrary): Shape {
     const shape = expr.dispatch(
       () => Shape.Scalar,
       () => Shape.Variable,
@@ -30,22 +34,25 @@ namespace Shape {
           case "vector":
             return Shape.Unknown; // TODO Calculate dimensions of vector
           case "+":
-            return t.map(Shape.of).reduce(shapeSum, Shape.Scalar);
+            return t.map((e) => Shape.of(e, mode, library)).reduce(shapeSum, Shape.Scalar);
           case "*":
           case "/":
-            return t.map(Shape.of).reduce(shapeMul, Shape.Scalar);
+            return t.map((e) => Shape.of(e, mode, library)).reduce(shapeMul, Shape.Scalar);
           case "^":
             if (t.length == 0) // Empty exponent... what?
               return Shape.Unknown;
             return Shape.of(t[0], mode);
-          default:
-            // TODO Let's try looking it up in the global function
-            // table, which doesn't exist yet.
+          default: {
+            const fn = library.get(h);
+            if (fn !== undefined) {
+              return fn.shape(t, mode);
+            }
             return Shape.Unknown;
+          }
         }
       }
     );
-    return assume(shape, mode);
+    return assume(shape, mode.vector);
   }
 
   export function multiplicationCommutes(shape: Shape): boolean {

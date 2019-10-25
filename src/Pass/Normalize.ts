@@ -66,7 +66,7 @@ export function simplifyRationals(expr: Expr, mode: Mode): Expr {
       // If there's no division, don't bother triggering it.
       return;
     }
-    if (ts.every((e) => Shape.multiplicationCommutes(Shape.of(e, mode.vector)))) {
+    if (!ts.every((e) => Shape.multiplicationCommutes(Shape.of(e, mode)))) {
       // If multiplication isn't commutative, then it's a dangerous
       // operation.
       return;

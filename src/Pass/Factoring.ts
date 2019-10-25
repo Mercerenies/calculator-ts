@@ -99,7 +99,7 @@ function shouldBeFlipped(expr: Expr[]): Expr | null {
 export function collectLikeFactors(expr: Expr, mode: Mode): Expr {
   let disabled = false;
   expr.ifCompoundHead("*", function(tail) {
-    if (!tail.every((e) => Shape.multiplicationCommutes(Shape.of(e, mode.vector))))
+    if (!tail.every((e) => Shape.multiplicationCommutes(Shape.of(e, mode))))
       disabled = true;
   });
   if (disabled)
@@ -125,7 +125,7 @@ export function collectFactorsFromDenom(expr: Expr, mode: Mode): Expr {
     const numt = Compound.termsOf("*", num);
     const dent = Compound.termsOf("*", den);
 
-    if (!(numt.concat(dent)).every((e) => Shape.multiplicationCommutes(Shape.of(e, mode.vector))))
+    if (!(numt.concat(dent)).every((e) => Shape.multiplicationCommutes(Shape.of(e, mode))))
       return; // Not commutative so ignore.
 
     const numleft: Expr[] = [];
