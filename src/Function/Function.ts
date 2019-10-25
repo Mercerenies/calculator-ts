@@ -30,9 +30,9 @@ export function tryApply(map: Map<String, Function>,
 
 }
 
-export function synonym(fn: Function): Function {
+export function synonym(newname: string, fn: Function): Function {
   return {
-    name: fn.name,
+    name: newname,
     eval(args, mode) { return fn.eval(args, mode); },
     derivative(arg, args, mode) { return fn.derivative(arg, args, mode); },
     shape(args, mode) { return fn.shape(args, mode); },

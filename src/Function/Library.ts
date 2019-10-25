@@ -1,8 +1,9 @@
 
-import { Function } from './Function'
+import { Function, synonym } from './Function'
 import * as Trig from './Trigonometry'
 import * as Approx from './Approximate'
 import * as Calc from './Calculus'
+import * as Trans from './Transcendental'
 
 function compileFns(iter: Iterable<Function>): Map<string, Function> {
   const m = new Map<string, Function>();
@@ -19,4 +20,5 @@ export const StandardLibrary: Map<string, Function> =
     Trig.asin, Trig.acos, Trig.atan, Trig.acsc, Trig.asec, Trig.acot,
     Trig.asinh, Trig.acosh, Trig.atanh, Trig.acsch, Trig.asech, Trig.acoth,
     Approx.approx, Calc.derivative,
+    Trans.log, Trans.exp, Trans.sqrt, synonym("ln", Trans.log),
   ]);
