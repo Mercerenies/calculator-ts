@@ -45,8 +45,9 @@ export const tan: Function =
   )
   .alwaysInexact()
   .withShape(B.Always(() => Shape.Scalar))
-  .withDeriv(B.Unary((x, mode) => new Expr("*", [ator(mode), new Expr("^", [new Expr("sec", [x]),
-                                                                            Expr.from(2)])])))
+  .withDeriv(B.Unary((x, mode) => new Expr("*", [ator(mode),
+                                                 new Expr("^", [new Expr("sec", [x]),
+                                                                Expr.from(2)])])))
   .freeze();6
 
 export const csc: Function =
@@ -58,6 +59,10 @@ export const csc: Function =
   )
   .alwaysInexact()
   .withShape(B.Always(() => Shape.Scalar))
+  .withDeriv(B.Unary((x, mode) => new Expr("*", [ator(mode),
+                                                 Expr.from(-1),
+                                                 new Expr("cot", [x]),
+                                                 new Expr("csc", [x])])))
   .freeze();
 
 export const sec: Function =
@@ -69,6 +74,9 @@ export const sec: Function =
   )
   .alwaysInexact()
   .withShape(B.Always(() => Shape.Scalar))
+  .withDeriv(B.Unary((x, mode) => new Expr("*", [ator(mode),
+                                                 new Expr("sec", [x]),
+                                                 new Expr("tan", [x])])))
   .freeze();
 
 export const cot: Function =
@@ -80,6 +88,10 @@ export const cot: Function =
   )
   .alwaysInexact()
   .withShape(B.Always(() => Shape.Scalar))
+  .withDeriv(B.Unary((x, mode) => new Expr("*", [ator(mode),
+                                                 Expr.from(-1),
+                                                 new Expr("^", [new Expr("csc", [x]),
+                                                                Expr.from(2)])])))
   .freeze();
 
 export const sinh: Function =
@@ -91,6 +103,7 @@ export const sinh: Function =
   )
   .alwaysInexact()
   .withShape(B.Always(() => Shape.Scalar))
+  .withDeriv(B.Unary((x, mode) => new Expr("*", [ator(mode), new Expr("cosh", [x])])))
   .freeze();
 
 export const cosh: Function =
@@ -102,6 +115,7 @@ export const cosh: Function =
   )
   .alwaysInexact()
   .withShape(B.Always(() => Shape.Scalar))
+  .withDeriv(B.Unary((x, mode) => new Expr("*", [ator(mode), new Expr("sinh", [x])])))
   .freeze();
 
 export const tanh: Function =
@@ -113,6 +127,9 @@ export const tanh: Function =
   )
   .alwaysInexact()
   .withShape(B.Always(() => Shape.Scalar))
+  .withDeriv(B.Unary((x, mode) => new Expr("*", [ator(mode),
+                                                 new Expr("^", [new Expr("sech", [x]),
+                                                                Expr.from(2)])])))
   .freeze();
 
 export const csch: Function =
@@ -124,6 +141,10 @@ export const csch: Function =
   )
   .alwaysInexact()
   .withShape(B.Always(() => Shape.Scalar))
+  .withDeriv(B.Unary((x, mode) => new Expr("*", [ator(mode),
+                                                 Expr.from(-1),
+                                                 new Expr("coth", [x]),
+                                                 new Expr("csch", [x])])))
   .freeze();
 
 export const sech: Function =
@@ -135,6 +156,10 @@ export const sech: Function =
   )
   .alwaysInexact()
   .withShape(B.Always(() => Shape.Scalar))
+  .withDeriv(B.Unary((x, mode) => new Expr("*", [ator(mode),
+                                                 Expr.from(-1),
+                                                 new Expr("sech", [x]),
+                                                 new Expr("tanh", [x])])))
   .freeze();
 
 export const coth: Function =
@@ -146,6 +171,10 @@ export const coth: Function =
   )
   .alwaysInexact()
   .withShape(B.Always(() => Shape.Scalar))
+  .withDeriv(B.Unary((x, mode) => new Expr("*", [ator(mode),
+                                                 Expr.from(-1),
+                                                 new Expr("^", [new Expr("csch", [x]),
+                                                                Expr.from(2)])])))
   .freeze();
 
 export const asin: Function =
@@ -157,6 +186,13 @@ export const asin: Function =
   )
   .alwaysInexact()
   .withShape(B.Always(() => Shape.Scalar))
+  .withDeriv(B.Unary((x, mode) => new Expr("/", [rtoa(mode),
+                                                 new Expr("sqrt", [
+                                                   new Expr("-", [
+                                                     Expr.from(1),
+                                                     new Expr("^", [x, Expr.from(2)]),
+                                                   ])
+                                                 ])])))
   .freeze();
 
 export const acos: Function =
@@ -168,6 +204,13 @@ export const acos: Function =
   )
   .alwaysInexact()
   .withShape(B.Always(() => Shape.Scalar))
+  .withDeriv(B.Unary((x, mode) => new Expr("/", [new Expr("_", [rtoa(mode)]),
+                                                 new Expr("sqrt", [
+                                                   new Expr("-", [
+                                                     Expr.from(1),
+                                                     new Expr("^", [x, Expr.from(2)]),
+                                                   ])
+                                                 ])])))
   .freeze();
 
 export const atan: Function =
@@ -179,6 +222,11 @@ export const atan: Function =
   )
   .alwaysInexact()
   .withShape(B.Always(() => Shape.Scalar))
+  .withDeriv(B.Unary((x, mode) => new Expr("/", [rtoa(mode),
+                                                 new Expr("+", [
+                                                   Expr.from(1),
+                                                   new Expr("^", [x, Expr.from(2)]),
+                                                 ])])))
   .freeze();
 
 export const acsc: Function =
@@ -190,6 +238,16 @@ export const acsc: Function =
   )
   .alwaysInexact()
   .withShape(B.Always(() => Shape.Scalar))
+  .withDeriv(B.Unary((x, mode) => new Expr("/", [new Expr("_", [rtoa(mode)]),
+                                                 new Expr("*", [
+                                                   new Expr("^", [x, Expr.from(2)]),
+                                                   new Expr("sqrt", [
+                                                     new Expr("-", [
+                                                       Expr.from(1),
+                                                       new Expr("^", [x, Expr.from(-2)]),
+                                                     ]),
+                                                   ]),
+                                                 ])])))
   .freeze();
 
 export const asec: Function =
@@ -201,6 +259,16 @@ export const asec: Function =
   )
   .alwaysInexact()
   .withShape(B.Always(() => Shape.Scalar))
+  .withDeriv(B.Unary((x, mode) => new Expr("/", [rtoa(mode),
+                                                 new Expr("*", [
+                                                   new Expr("^", [x, Expr.from(2)]),
+                                                   new Expr("sqrt", [
+                                                     new Expr("-", [
+                                                       Expr.from(1),
+                                                       new Expr("^", [x, Expr.from(-2)]),
+                                                     ]),
+                                                   ]),
+                                                 ])])))
   .freeze();
 
 export const acot: Function =
@@ -212,6 +280,11 @@ export const acot: Function =
   )
   .alwaysInexact()
   .withShape(B.Always(() => Shape.Scalar))
+  .withDeriv(B.Unary((x, mode) => new Expr("/", [new Expr("_", [rtoa(mode)]),
+                                                 new Expr("+", [
+                                                   Expr.from(1),
+                                                   new Expr("^", [x, Expr.from(2)]),
+                                                 ])])))
   .freeze();
 
 export const asinh: Function =
@@ -223,6 +296,13 @@ export const asinh: Function =
   )
   .alwaysInexact()
   .withShape(B.Always(() => Shape.Scalar))
+  .withDeriv(B.Unary((x, mode) => new Expr("/", [rtoa(mode),
+                                                 new Expr("sqrt", [
+                                                   new Expr("+", [
+                                                     new Expr("^", [x, Expr.from(2)]),
+                                                     Expr.from(1),
+                                                   ])
+                                                 ])])))
   .freeze();
 
 export const acosh: Function =
@@ -234,6 +314,13 @@ export const acosh: Function =
   )
   .alwaysInexact()
   .withShape(B.Always(() => Shape.Scalar))
+  .withDeriv(B.Unary((x, mode) => new Expr("/", [rtoa(mode),
+                                                 new Expr("sqrt", [
+                                                   new Expr("-", [
+                                                     new Expr("^", [x, Expr.from(2)]),
+                                                     Expr.from(1),
+                                                   ])
+                                                 ])])))
   .freeze();
 
 export const atanh: Function =
@@ -245,6 +332,11 @@ export const atanh: Function =
   )
   .alwaysInexact()
   .withShape(B.Always(() => Shape.Scalar))
+  .withDeriv(B.Unary((x, mode) => new Expr("/", [rtoa(mode),
+                                                 new Expr("-", [
+                                                   Expr.from(1),
+                                                   new Expr("^", [x, Expr.from(2)]),
+                                                 ])])))
   .freeze();
 
 export const acsch: Function =
@@ -256,6 +348,16 @@ export const acsch: Function =
   )
   .alwaysInexact()
   .withShape(B.Always(() => Shape.Scalar))
+  .withDeriv(B.Unary((x, mode) => new Expr("/", [new Expr("_", [rtoa(mode)]),
+                                                 new Expr("*", [
+                                                   new Expr("^", [x, Expr.from(2)]),
+                                                   new Expr("sqrt", [
+                                                     new Expr("+", [
+                                                       new Expr("^", [x, Expr.from(-2)]),
+                                                       Expr.from(1),
+                                                     ]),
+                                                   ]),
+                                                 ])])))
   .freeze();
 
 export const asech: Function =
@@ -267,6 +369,16 @@ export const asech: Function =
   )
   .alwaysInexact()
   .withShape(B.Always(() => Shape.Scalar))
+  .withDeriv(B.Unary((x, mode) => new Expr("/", [new Expr("_", [rtoa(mode)]),
+                                                 new Expr("*", [
+                                                   new Expr("^", [x, Expr.from(2)]),
+                                                   new Expr("sqrt", [
+                                                     new Expr("-", [
+                                                       new Expr("^", [x, Expr.from(-2)]),
+                                                       Expr.from(1),
+                                                     ]),
+                                                   ]),
+                                                 ])])))
   .freeze();
 
 export const acoth: Function =
@@ -278,4 +390,9 @@ export const acoth: Function =
   )
   .alwaysInexact()
   .withShape(B.Always(() => Shape.Scalar))
+  .withDeriv(B.Unary((x, mode) => new Expr("/", [new Expr("_", [rtoa(mode)]),
+                                                 new Expr("-", [
+                                                   Expr.from(1),
+                                                   new Expr("^", [x, Expr.from(2)]),
+                                                 ])])))
   .freeze();
