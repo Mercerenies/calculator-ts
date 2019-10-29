@@ -8,6 +8,9 @@ import { getConst } from '../Constants'
 import { StandardLibrary } from '../Function/Library'
 import { tryApply } from '../Function/Function'
 
+// TODO On these next two passes, we need to be careful about 0 * x if
+// the shape of x is wonky.
+
 export function foldConstants(expr: Expr): Expr {
   // Handles +, *, /
 
