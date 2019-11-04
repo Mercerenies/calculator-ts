@@ -97,6 +97,10 @@ export function binDiv(a: Expr, b: Expr): Expr {
   return binOp(a, b, "/", (x, y) => x.div(y));
 }
 
+export function binPow(a: Expr, b: Expr): Expr {
+  return binOp(a, b, "^", (x, y) => x.pow(y));
+}
+
 export function unRecip(a: Expr): Expr {
   return unOp(a, (x) => new Expr("/", [Expr.from(1), x]), (x) => x.recip());
 }

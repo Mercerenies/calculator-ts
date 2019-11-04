@@ -38,6 +38,24 @@ export default class Unit {
     return this.mul(that.recip());
   }
 
+  scal(value: Expr): Unit {
+    return new Unit({
+      dimension: this.dimension,
+      numerator: this.numerator,
+      denominator: this.denominator,
+      multToBase: Compound.binMul(this.multToBase, value),
+    });
+  }
+
+  rename(newname: string): Unit {
+    return new Unit({
+      dimension: this.dimension,
+      numerator: [newname],
+      denominator: [],
+      multToBase: this.multToBase,
+    });
+  }
+
   nameAsExpr(): Expr {
     const num = stringsToExpr(this.numerator);
     const den = stringsToExpr(this.denominator);
@@ -48,6 +66,21 @@ export default class Unit {
     if (!unit1.dimension.eq(unit2.dimension))
       return null; // If dimensions are not equal, we can't convert.
     return new Expr("/", [new Expr("*", [value, unit1.multToBase]), unit2.multToBase]);
+  }
+
+  static simple(name: string, dim: Dimension | Dimension.SimpleDim, tobase: Expr): Unit {
+    if (!(dim instanceof Dimension))
+      dim = Dimension.simple(dim);
+    return new Unit({
+      dimension: dim,
+      numerator: [name],
+      denominator: [],
+      multToBase: tobase,
+    });
+  }
+
+  static base(name: string, dim: Dimension | Dimension.SimpleDim): Unit {
+    return this.simple(name, dim, Expr.from(1));
   }
 
 }

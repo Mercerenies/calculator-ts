@@ -4,6 +4,7 @@ import * as Trig from './Trigonometry'
 import * as Approx from './Approximate'
 import * as Calc from './Calculus'
 import * as Trans from './Transcendental'
+import * as Unit from './Unit'
 
 function compileFns(iter: Iterable<Function>): Map<string, Function> {
   const m = new Map<string, Function>();
@@ -21,4 +22,5 @@ export const StandardLibrary: Map<string, Function> =
     Trig.asinh, Trig.acosh, Trig.atanh, Trig.acsch, Trig.asech, Trig.acoth,
     Approx.approx, Calc.derivative,
     Trans.log, Trans.exp, Trans.sqrt, synonym("ln", Trans.log),
+    Unit.uconvert,
   ]);
