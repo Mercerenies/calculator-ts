@@ -63,6 +63,16 @@ function initTable(): void {
 
     // Length
     addUnits(expandSIPrefixes("m", Unit.base("m", SimpleDim.Length)));
+    addUnit("in", Unit.simple("in", SimpleDim.Length, Expr.from(nratio(254, 10000))));
+    addUnit("ft", Unit.simple("ft", SimpleDim.Length, Expr.from(nratio(3048, 10000))));
+    addUnit("yd", Unit.simple("yd", SimpleDim.Length, Expr.from(nratio(9144, 10000))));
+    addUnit("mi", Unit.simple("mi", SimpleDim.Length, Expr.from(nratio(1609344, 1000))));
+    addUnit("au", Unit.simple("au", SimpleDim.Length, Expr.from(BigInt('149597870700'))));
+    addUnit("lyr", Unit.simple("lyr", SimpleDim.Length,
+                               Expr.from(BigInt('9460730472580800'))));
+    addUnit("pc", Unit.simple("pc", SimpleDim.Length,
+                              new Expr("/", [Expr.from(BigInt('96939420213600000')),
+                                             Expr.from('pi')])));
 
     // Time
     addUnits(expandSIPrefixes("s", Unit.base("s", SimpleDim.Time)));
