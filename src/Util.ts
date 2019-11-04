@@ -32,3 +32,11 @@ export function sortToNum(a: "lt" | "gt" | "eq"): number {
       return never(a);
   }
 }
+
+export function replicate<T>(arr: T[], n: number): T[] {
+  const result: T[] = [];
+  for (var i = 0; i < n; i++) {
+    result.push(...arr);
+  }
+  return result;
+}
