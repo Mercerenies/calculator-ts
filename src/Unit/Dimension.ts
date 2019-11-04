@@ -65,6 +65,6 @@ namespace Dimension {
 
 }
 
-const DimCount = (Dimension.SimpleDim as any).length; // I love that this works.
+const DimCount = 4;
 
 export default Dimension;
