@@ -62,6 +62,9 @@ function initTable(): void {
     // Length
     addUnits(expandSIPrefixes("m", Unit.base("m", SimpleDim.Length)));
 
+    // Time
+    addUnits(expandSIPrefixes("s", Unit.base("s", SimpleDim.Time)));
+
     // TODO Lots more units
 
   }
