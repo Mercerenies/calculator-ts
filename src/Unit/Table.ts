@@ -61,6 +61,11 @@ function initTable(): void {
   if (table === null) {
     table = new Map<string, Unit>();
 
+    // Angular
+    addUnit("rad", Unit.base("rad", SimpleDim.Angle));
+    addUnit("deg", Unit.simple("deg", SimpleDim.Angle,
+                               new Expr("/", [Expr.from("pi"), Expr.from(180)])));
+
     // Length
     addUnits(expandSIPrefixes("m", Unit.base("m", SimpleDim.Length)));
     addUnit("in", Unit.simple("in", SimpleDim.Length, Expr.from(nratio(254, 10000))));
@@ -76,6 +81,15 @@ function initTable(): void {
 
     // Time
     addUnits(expandSIPrefixes("s", Unit.base("s", SimpleDim.Time)));
+    addUnit("sec", Unit.base("sec", SimpleDim.Time)); // sec == s
+    addUnit("min", Unit.simple("min", SimpleDim.Time, Expr.from(60)));
+    addUnit("hr", Unit.simple("hr", SimpleDim.Time, Expr.from(3600)));
+    addUnit("day", Unit.simple("day", SimpleDim.Time, Expr.from(86400)));
+    addUnit("wk", Unit.simple("wk", SimpleDim.Time, Expr.from(604800)));
+    addUnit("yr", Unit.simple("yr", SimpleDim.Time, Expr.from(31557600)));
+
+    // Volume
+    addUnit("L", table!.get("dm")!.pow(BigInt(3)).rename("L"));
 
     // TODO Lots more units
 
