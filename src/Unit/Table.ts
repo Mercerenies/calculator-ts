@@ -3,6 +3,7 @@ import Dimension from './Dimension'
 import Unit from './Unit'
 import Expr from '../Expr'
 import * as Compound from '../Compound'
+import { nratio } from '../Numerical/Numeral'
 
 const SimpleDim = Dimension.SimpleDim; // Alias for brevity
 
@@ -43,17 +44,18 @@ function expandSIPrefixes(name: string, unit: Unit): [string, Unit][] {
   return result;
 }
 
-function addUnits(name: string, unit: Unit): void;
-function addUnits(many: [string, Unit][]): void;
-function addUnits(arg1: string | [string, Unit][], arg2?: Unit): void {
-  if (typeof arg1 === 'string') {
-    table!.set(arg1, arg2!);
-  } else {
-    for (const [s, u] of arg1) {
-      addUnits(s, u);
-    }
+function addUnit(name: string, unit: Unit): void {
+  table!.set(name, unit);
+}
+
+function addUnits(many: [string, Unit][]): void {
+  for (const [s, u] of many) {
+    addUnit(s, u);
   }
 }
+
+// Note: A lot of the measurements in the following function are from
+// the Emacs Calc units table.
 
 function initTable(): void {
   if (table === null) {
