@@ -1,7 +1,7 @@
 
-import Ratio from './Ratio'
-import Floating from './Floating'
-import Complex from './Complex'
+import Ratio, { ratio } from './Ratio'
+import Floating, { floating } from './Floating'
+import Complex, { complex } from './Complex'
 import NumberLike from './NumberLike'
 import { cmp, never, noop } from '../Util'
 
@@ -197,6 +197,18 @@ export function numeral<U extends NumberLike<U>>(value: U): Numeral {
     return value;
   else
     throw "unknown number type to numeral(...)";
+}
+
+export function nratio(n: number | bigint, d: number | bigint): Numeral {
+  return numeral(ratio(n, d));
+}
+
+export function nfloat(f: number): Numeral {
+  return numeral(floating(f));
+}
+
+export function ncomplex(r: number, i: number): Numeral {
+  return numeral(complex(r, i));
 }
 
 function rToF(a: Ratio): Floating {
