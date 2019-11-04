@@ -60,6 +60,9 @@ export default class Floating implements NumberLike<Floating> {
   }
 
   toString(): string {
+    // TODO To distinguish these from straight integers (of the ratio
+    // variety), I'd like to always print either a decimal point or an
+    // exponent e## to indicate that this is a floating point number.
     return this.value.toString();
   }
 
