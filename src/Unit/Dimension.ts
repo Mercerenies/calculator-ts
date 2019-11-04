@@ -27,6 +27,10 @@ class Dimension {
     return this.mul(that.recip());
   }
 
+  pow(value: bigint): Dimension {
+    return new Dimension(this.array.map((n) => n * Number(value)));
+  }
+
   get(dim: Dimension.SimpleDim): number {
     return this.array[dim];
   }

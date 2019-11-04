@@ -2,6 +2,7 @@
 import Dimension from './Dimension'
 import Expr from '../Expr'
 import * as Compound from '../Compound'
+import { replicate } from '../Util'
 
 export default class Unit {
   private dimension: Dimension;
@@ -36,6 +37,21 @@ export default class Unit {
 
   div(that: Unit): Unit {
     return this.mul(that.recip());
+  }
+
+  pow(value: bigint): Unit {
+    if (value < BigInt(0)) {
+      return this.pow(- value).recip();
+    } else if (value == BigInt(0)) {
+      return Unit.empty();
+    } else {
+      return new Unit({
+        dimension: this.dimension.pow(value),
+        numerator: replicate(this.numerator, Number(value)),
+        denominator: replicate(this.denominator, Number(value)),
+        multToBase: Compound.binPow(this.multToBase, Expr.from(value)),
+      });
+    }
   }
 
   scal(value: Expr): Unit {
@@ -73,7 +89,7 @@ export default class Unit {
       dim = Dimension.simple(dim);
     return new Unit({
       dimension: dim,
-      numerator: [name],
+      numerator: (name == "" ? [] : [name]),
       denominator: [],
       multToBase: tobase,
     });
@@ -81,6 +97,10 @@ export default class Unit {
 
   static base(name: string, dim: Dimension | Dimension.SimpleDim): Unit {
     return this.simple(name, dim, Expr.from(1));
+  }
+
+  static empty(): Unit {
+    return this.base("", Dimension.empty());
   }
 
 }
