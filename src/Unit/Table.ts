@@ -1,6 +1,7 @@
 
 import Dimension from './Dimension'
 import Unit from './Unit'
+import * as Temp from './Temperature'
 import Expr from '../Expr'
 import * as Compound from '../Compound'
 import { nratio } from '../Numerical/Numeral'
@@ -87,6 +88,13 @@ function initTable(): void {
     addUnit("day", Unit.simple("day", SimpleDim.Time, Expr.from(86400)));
     addUnit("wk", Unit.simple("wk", SimpleDim.Time, Expr.from(604800)));
     addUnit("yr", Unit.simple("yr", SimpleDim.Time, Expr.from(31557600)));
+
+    // Temperature
+    const t = (t: [string, Temp.Unit]) => Temp.toRelativeUnit(t[0], t[1]);
+    addUnit(Temp.Kelvins[0], t(Temp.Kelvins));
+    addUnit(Temp.Celsius[0], t(Temp.Celsius));
+    addUnit(Temp.Fahrenheit[0], t(Temp.Fahrenheit));
+    addUnit(Temp.Rankine[0], t(Temp.Rankine));
 
     // Volume
     addUnit("L", table!.get("dm")!.pow(BigInt(3)).rename("L"));
