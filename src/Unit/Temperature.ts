@@ -50,3 +50,5 @@ export function convert(unit1: TemperatureUnit, unit2: TemperatureUnit, value: E
 export function toRelativeUnit(name: string, unit: TemperatureUnit): Unit {
   return Unit.simple(name, Dimension.SimpleDim.Temperature, unit.scale);
 }
+
+///// Function for absolute temp conversions
