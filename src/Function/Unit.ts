@@ -9,8 +9,14 @@ import * as Compound from '../Compound'
 
 function convertUnits(args: Expr[]): Expr | null {
 
-  if (args.length === 2)
+  let expandresult = false;
+  if (args.length === 2) {
     args = [Expr.from(1), ...args];
+    // If we're given two arguments to start with, the units are
+    // integrated in with the number, so provide the answer in the
+    // same format.
+    expandresult = true;
+  }
 
   if (args.length !== 3)
     return null;
@@ -26,7 +32,13 @@ function convertUnits(args: Expr[]): Expr | null {
     Compound.binMul(value, Expr.from(fromUnit.coefficient)),
     Expr.from(toUnit.coefficient)
   );
-  return Unit.convert(fromUnit.unit, toUnit.unit, value1);
+  const result = Unit.convert(fromUnit.unit, toUnit.unit, value1);
+
+  if (expandresult && (result !== null)) {
+    return new Expr("*", [result, toUnit.unit.nameAsExpr()]);
+  } else {
+    return result;
+  }
 
 }
 
