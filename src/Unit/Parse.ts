@@ -4,17 +4,18 @@ import Numeral from '../Numerical/Numeral'
 import * as Coerce from '../Coerce'
 import * as Compound from '../Compound'
 import Unit from './Unit'
-import { lookupUnit } from './Table'
+import * as Temp from './Temperature'
+import { lookupUnit, lookupTempUnit } from './Table'
 
-export interface ParseResult {
-  unit: Unit;
+export interface ParseResult<T> {
+  unit: T;
   coefficient: Numeral;
 }
 
 export function parseUnits(
   expr: Expr,
   lookup: (name: string) => Unit | undefined = lookupUnit
-): ParseResult | null {
+): ParseResult<Unit> | null {
   return expr.dispatch(
     function(n) {
       return {
@@ -76,6 +77,58 @@ export function parseUnits(
         }
         default:
           // Can't handle it
+          return null;
+      }
+    },
+  );
+}
+
+export function parseTempUnits(e: Expr): ParseResult<[string, Temp.Unit]> | null {
+  return e.dispatch(
+    () => null, // Scalars have dimension zero and are not
+                // temperatures.
+    function(s) {
+      // In the case of a string, look it up.
+      const temp = lookupTempUnit(s);
+      if (temp === undefined)
+        return null;
+      return {
+        unit: [s, temp],
+        coefficient: Numeral.one(),
+      };
+    },
+    function(head, args) {
+      switch (head) {
+        case "*":
+          /////
+        case "/":
+          if (args.length !== 2)
+            return null;
+          const [n, d] = args;
+          // We require that the numerator be a unit and the
+          // denominator a scalar.
+          let scalar: Numeral | null = null;
+          let unit: string | null = null;
+          d.ifNumber(function(a) { scalar = a; });
+          if (scalar === null)
+            return null;
+          n.ifVar(function(a) { unit = a; });
+          if (unit === null)
+            return null;
+          const unit1 = lookupTempUnit(unit);
+          if (unit1 === undefined)
+            return null;
+          const scalar1: Numeral = scalar;
+          return {
+            unit: [unit, unit1],
+            // I don't know why this cast is necessary. TS seems to
+            // think it's a never variable here.
+            coefficient: scalar1.recip(),
+          };
+        default:
+          // Can't handle it. Note, in particular, that we don't deal
+          // with exponents, as those would change the dimension and
+          // this is strictly a one-dimensional conversion.
           return null;
       }
     },

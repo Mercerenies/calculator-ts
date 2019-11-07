@@ -42,6 +42,10 @@ export const Rankine: [string, TemperatureUnit] = ["degR", {
   translate: Expr.from(0),
 }];
 
+export const KnownUnits: [string, TemperatureUnit][] = [
+  Kelvins, Celsius, Fahrenheit, Rankine,
+];
+
 export function convert(unit1: TemperatureUnit, unit2: TemperatureUnit, value: Expr): Expr {
   const k = Compound.binAdd(Compound.binMul(unit1.scale, value), unit1.translate);
   return Compound.binDiv(Compound.binSub(k, unit2.translate), unit2.scale);
@@ -50,5 +54,3 @@ export function convert(unit1: TemperatureUnit, unit2: TemperatureUnit, value: E
 export function toRelativeUnit(name: string, unit: TemperatureUnit): Unit {
   return Unit.simple(name, Dimension.SimpleDim.Temperature, unit.scale);
 }
-
-///// Function for absolute temp conversions

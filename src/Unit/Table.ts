@@ -10,6 +10,7 @@ const SimpleDim = Dimension.SimpleDim; // Alias for brevity
 
 // Lazy initialized when you first request it
 let table: Map<string, Unit> | null = null;
+let tempTable: Map<string, Temp.Unit> | null = null;
 
 const siPrefixes: [string, number][] = [
   ["Y",  24],
@@ -90,17 +91,18 @@ function initTable(): void {
     addUnit("yr", Unit.simple("yr", SimpleDim.Time, Expr.from(31557600)));
 
     // Temperature
-    const t = (t: [string, Temp.Unit]) => Temp.toRelativeUnit(t[0], t[1]);
-    addUnit(Temp.Kelvins[0], t(Temp.Kelvins));
-    addUnit(Temp.Celsius[0], t(Temp.Celsius));
-    addUnit(Temp.Fahrenheit[0], t(Temp.Fahrenheit));
-    addUnit(Temp.Rankine[0], t(Temp.Rankine));
+    for (const t of Temp.KnownUnits) {
+      addUnit(t[0], Temp.toRelativeUnit(t[0], t[1]));
+    }
 
     // Volume
     addUnit("L", table!.get("dm")!.pow(BigInt(3)).rename("L"));
 
     // TODO Lots more units
 
+  }
+  if (tempTable === null) {
+    tempTable = new Map<string, Temp.Unit>(Temp.KnownUnits);
   }
 }
 
@@ -109,6 +111,15 @@ function getTable(): Map<string, Unit> {
   return table!;
 }
 
+function getTempTable(): Map<string, Temp.Unit> {
+  initTable();
+  return tempTable!;
+}
+
 export function lookupUnit(name: string): Unit | undefined {
   return getTable().get(name);
+}
+
+export function lookupTempUnit(name: string): Temp.Unit | undefined {
+  return getTempTable().get(name);
 }
