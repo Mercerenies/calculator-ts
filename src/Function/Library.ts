@@ -22,5 +22,5 @@ export const StandardLibrary: Map<string, Function> =
     Trig.asinh, Trig.acosh, Trig.atanh, Trig.acsch, Trig.asech, Trig.acoth,
     Approx.approx, Calc.derivative,
     Trans.log, Trans.exp, Trans.sqrt, synonym("ln", Trans.log),
-    Unit.uconvert,
+    Unit.uconvert, Unit.utconvert,
   ]);

@@ -99,9 +99,32 @@ export function parseTempUnits(e: Expr): ParseResult<[string, Temp.Unit]> | null
     },
     function(head, args) {
       switch (head) {
-        case "*":
-          /////
-        case "/":
+        case "*": {
+          if (args.length !== 2)
+            return null;
+          const [a, b] = args;
+          // We require that one piece be a scalar and the other a
+          // temperature unit.
+          let scalar: Numeral | null = null;
+          let unit: string | null = null;
+          a.ifNumber(function(a) { scalar = a; });
+          b.ifNumber(function(b) { scalar = b; });
+          if (scalar === null)
+            return null;
+          a.ifVar(function(a) { unit = a; });
+          b.ifVar(function(b) { unit = b; });
+          if (unit === null)
+            return null;
+          const unit1 = lookupTempUnit(unit);
+          if (unit1 === undefined)
+            return null;
+          const scalar1: Numeral = scalar;
+          return {
+            unit: [unit, unit1],
+            coefficient: scalar1,
+          };
+        }
+        case "/": {
           if (args.length !== 2)
             return null;
           const [n, d] = args;
@@ -121,10 +144,9 @@ export function parseTempUnits(e: Expr): ParseResult<[string, Temp.Unit]> | null
           const scalar1: Numeral = scalar;
           return {
             unit: [unit, unit1],
-            // I don't know why this cast is necessary. TS seems to
-            // think it's a never variable here.
             coefficient: scalar1.recip(),
           };
+        }
         default:
           // Can't handle it. Note, in particular, that we don't deal
           // with exponents, as those would change the dimension and

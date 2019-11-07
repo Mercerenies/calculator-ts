@@ -8,7 +8,7 @@ import { ParseResult, parseUnits, parseTempUnits } from '../Unit/Parse'
 import Expr from '../Expr'
 import * as Compound from '../Compound'
 
-function convertUnits<T>(args: Expr[]): Expr | null {
+function convertUnits(args: Expr[]): Expr | null {
 
   let expandresult = false;
   if (args.length === 2) {
@@ -43,7 +43,7 @@ function convertUnits<T>(args: Expr[]): Expr | null {
 
 }
 
-function convertTempUnits<T>(args: Expr[]): Expr | null {
+function convertTempUnits(args: Expr[]): Expr | null {
 
   let expandresult = false;
   if (args.length === 2) {
@@ -82,5 +82,12 @@ export const uconvert: Function =
   new FunctionBuilder({
     name: "uconvert",
     eval: convertUnits
+  })
+  .freeze();
+
+export const utconvert: Function =
+  new FunctionBuilder({
+    name: "utconvert",
+    eval: convertTempUnits
   })
   .freeze();
